@@ -69,6 +69,15 @@ table{
 			color:black;
 			font-size:12px;
 	}
+
+	.lunch {
+			overflow:hidden;
+			position:absolute;
+			width:140px;
+			background-image: url(lineback.svg);
+			color:black;
+			font-size:12px;
+	}	
 	
 </style>
 
@@ -77,7 +86,8 @@ table{
 var dataarr=	
 		
 <?php			
-
+	date_default_timezone_set('Europe/Stockholm');
+	
 	$log_db = new PDO('sqlite:./scheduledata.db');
 	$sql = 'CREATE TABLE IF NOT EXISTS sched(id INTEGER PRIMARY KEY,datum varchar(10), datan TEXT);';
 	$log_db->exec($sql);	
@@ -197,6 +207,12 @@ function scoreItems($source,$desto)
 	
 	// Synchronize each of the days with database - handle first day like partially complete
 	foreach($dayarr as $datumet=>$day){
+			
+			// Un-comment to view schedule data in source code
+			// echo "\n /* ";
+			// print_r($day);
+			//echo "*/ \n";
+			
 			if(isset($dbarr[$datumet])){
 //					echo "IN DB: ".$datumet."\n";
 					$dbday=$dbarr[$datumet];
@@ -215,12 +231,13 @@ function scoreItems($source,$desto)
 											$foundcnt=$score;
 									}
 							}
-
+						
 							if($foundcnt==11){
 						  		// 11 is considered perfect match - so no database update													
 							}else if($foundcnt>7){
-									// 8-10 is considered an updated match 
-									$dbarr[$datumet][$i]=$slot;
+									// 8-10 is considered an updated match
+									$slot['changed']=date("Y-m-d");
+									$dbarr[$datumet][$foundno]=$slot;
 									$changed=true;
 							}else if($foundcnt<=7){
 									// 0-7 is considered a new entry
@@ -228,6 +245,13 @@ function scoreItems($source,$desto)
 									$changed=true;
 							}
 					}
+				
+//					if($changed){
+//							echo "\n /* ";
+//							echo "Change";
+//							print_r($dbarr[$datumet]);
+//							echo "*/ \n";
+//					}
 				
 					if($changed){
 							// Update database - using updated data
@@ -287,9 +311,12 @@ function showdata()
 {
 		var today=new Date();
 		var currDay=new Date();
-		
+		today.setHours(12,00,00);
+		currDay.setHours(12,00,00);
+			
 		var weekno=getWeekNumber(today);
-    var day = (today.getUTCDay()||7);
+    var day = (today.getUTCDay()||7)-1;
+		alert(day);
     var firstDayOfWeek = new Date(today);
 		firstDayOfWeek.setDate(today.getDate() - day);
 		var weekStart=-1;
@@ -312,6 +339,9 @@ function showdata()
 				str+="</div>";
 				str+="</td>";
 			
+				var startlunch=(timetopix("12:00")*30);
+				var endlunch=(timetopix("13:00")*30)-startlunch;
+			
 				for(var j=0;j<7;j++){
 						
 						var month=(currDay.getMonth()+1);
@@ -323,6 +353,9 @@ function showdata()
 					
 						str+="<td>";
 						str+="<div class='sched' id='s"+datumet+"' >";
+					
+
+						str+="<div class='lunch' style='top:"+startlunch+"px;height:"+endlunch+"px'></div>";
 					
 						if(typeof dataarr[datumet] != "undefined"){
 								for(var k=0;k<dataarr[datumet].length;k++){
