@@ -62,9 +62,10 @@ table{
 }
 	
 	.timeslot {
+			left:2px;
 			overflow:hidden;
 			position:absolute;
-			width:140px;
+			width:148px;
 			background-color:#def;
 			color:black;
 			font-size:12px;
@@ -73,10 +74,13 @@ table{
 	.lunch {
 			overflow:hidden;
 			position:absolute;
-			width:140px;
+			left:2px;
+			width:148px;
 			background-image: url(lineback.svg);
 			color:black;
 			font-size:12px;
+			border:1px solid black;
+			box-shadow:2px 2px 4px rgba(0,0,0,0.2) inset;
 	}	
 	
 </style>
