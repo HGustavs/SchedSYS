@@ -1,20 +1,23 @@
 <html>
  
 <head>
+	
+<script src="canvas.js"></script> 
 			
 <style>
 	
 body{
 		font-family: Arial Narrow,Arial,sans-serif; 
-		font-size:16px;
+		font-size:20px;
+		cursor: none;
 }
 
 table{
 	font-family: Arial Narrow,Arial,sans-serif; 
-	font-size:16px;
+	font-size:20px;
 	font-style: normal;
 	font-variant: normal;
-	font-weight: 100;
+	font-weight: 700;
 	border-collapse: collapse;
 	border:1px solid black;
 }		
@@ -31,7 +34,7 @@ table{
 	}
 	
 	.sched {
-			width:150px;
+			width:180px;
 			height:300px;
 			position:relative;
 	}
@@ -62,10 +65,10 @@ table{
 }
 	
 	.timeslot {
-			left:2px;
+			left:0px;
 			overflow:hidden;
 			position:absolute;
-			width:148px;
+			width:178px;
 			background-color:#def;
 			color:black;
 			font-size:12px;
@@ -74,14 +77,21 @@ table{
 	.lunch {
 			overflow:hidden;
 			position:absolute;
-			left:2px;
-			width:148px;
+			left:0px;
+			width:180px;
 			background-image: url(lineback.svg);
 			color:black;
 			font-size:12px;
 			border:1px solid black;
 			box-shadow:2px 2px 4px rgba(0,0,0,0.2) inset;
 	}	
+	
+	#canvas{
+			border:1px solid red;
+			bottom:0px;
+			width:900px;
+			height:250px;
+	}
 	
 </style>
 
@@ -272,9 +282,10 @@ function scoreItems($source,$desto)
 			}else{
 //					echo "NOT IN DB: ";
 
+					$dayy=json_encode($day);
 					$query = $log_db->prepare('INSERT INTO sched(datum,datan) VALUES (:datum,:datan)');
 					$query->bindParam(':datum', $datumet);
-					$query->bindParam(':datan', json_encode($day));
+					$query->bindParam(':datan', $dayy);
 					$query->execute();
 				
 					$dbarr[$datumet]=$day;
@@ -314,17 +325,24 @@ var result = getWeekNumber(new Date());
 function showdata()
 {
 		var today=new Date();
+
+		// Show last update time in top of schedule!
+		var currh=today.getHours();
+		if (currh<10) currh="0"+currh;
+		var currm=today.getMinutes()
+		if (currm<10) currm="0"+currm;
+		document.getElementById("feedback").innerHTML=currh+":"+currm;		
+	
 		var currDay=new Date();
 		today.setHours(12,00,00);
 		currDay.setHours(12,00,00);
-			
+	
 		var weekno=getWeekNumber(today);
     var day = (today.getUTCDay()||7)-1;
-		alert(day);
     var firstDayOfWeek = new Date(today);
 		firstDayOfWeek.setDate(today.getDate() - day);
 		var weekStart=-1;
-		var weekEnd=1;
+		var weekEnd=2;
 	
 		currDay.setDate(firstDayOfWeek.getDate() + (weekStart*7));
 		
@@ -332,27 +350,34 @@ function showdata()
 		
 		// A table to fit the full calendar
 		str+="<table>";
-		str+="<tr><th>week</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th><th>Sunday</th>";
+		str+="<tr><th>week</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>";
 		for(var i=weekno+weekStart;i<=weekno+weekEnd;i++){
 			
 				str+="<tr>";
 
 				str+="<td>";
 				str+="<div class='weekno' >";
-				str+=i;
+				// End of year handling
+				if(i>52){
+						str+=(i-52);				
+				}else{
+						str+=i;
+				}
 				str+="</div>";
 				str+="</td>";
 			
 				var startlunch=(timetopix("12:00")*30);
 				var endlunch=(timetopix("13:00")*30)-startlunch;
 			
-				for(var j=0;j<7;j++){
+				for(var j=0;j<5;j++){
 						
 						var month=(currDay.getMonth()+1);
 						if(month<10) month="0"+month;
 						var day=currDay.getDate();
 						if(day<10) day="0"+day;
 						var datumet=currDay.getFullYear()+"-"+month+"-"+day;
+						
+						// Advance to next day in calendar
 						currDay.setDate(currDay.getDate()+1);
 					
 						str+="<td>";
@@ -379,28 +404,45 @@ function showdata()
 						str+="</div>";
 						str+="</td>";
 				}
+			
+				// Advance two days for week-end
+				currDay.setDate(currDay.getDate()+2);
 				
 				str+="</tr>";
 		}
 		str+="</table>";
 	
+		setTimeout(function(){ refreshit(); }, 600000);
+	
+		if (typeof startupCanvas == 'function') { 
+			startupCanvas(); 
+		}
+	
 		document.getElementById("datedisp").innerHTML=str;
 		
 }
-
+	
+// Refresh function in case we need to add some type of house-keeping such as up-time keeping...
+function refreshit()
+{
+		 location.reload();
+}
+	
 </script>
 				
 </head>
 
 <body onload="showdata();">
 <div class='wrkap'>
-DO IT JUST DO IT<br><hr><br>
-
-<div id="datedisp">
-
-</div>
+	DO IT JUST DO IT <span id='feedback'></span><br><hr><br>
+	<div id="datedisp">
 
 	</div>
-</body>
 
+</div>
+	
+<canvas id="canvas" width="450" height="125">
+</canvas>
+	
+</body>
 </html>
