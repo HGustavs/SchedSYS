@@ -28,6 +28,15 @@ table{
 		padding:4px;
 	}
 	
+	.dayte {
+		color:white;
+		background-color:#816;
+		padding:4px;
+		font-size:16px;
+		text-align:center;
+	
+	}
+	
 	td{
 		border-left:2px solid #816; 
 		border-right:2px solid #816; 	
@@ -47,6 +56,10 @@ table{
 		border-bottom:2px solid #816; 	
 	}
 
+	.curr {
+			background-color:#f8e8f8;
+	}	
+	
 .wrap{
     transform: rotate(-90deg);
     transform-origin:top left;
@@ -271,7 +284,8 @@ function scoreItems($source,$desto)
 							// Update database - using updated data
 							$query = $log_db->prepare('UPDATE sched set datan=:datan where datum=:datum');
 							$query->bindParam(':datum', $datumet);
-							$query->bindParam(':datan', json_encode($dbarr[$datumet]));
+							$cont=json_encode($dbarr[$datumet]);
+							$query->bindParam(':datan', $cont);
 							$query->execute();
 					}else{
 //							echo "No Change";
@@ -344,16 +358,22 @@ function showdata()
 		var weekStart=-1;
 		var weekEnd=2;
 	
-		currDay.setDate(firstDayOfWeek.getDate() + (weekStart*7));
-		
+		var weekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+		currDay.setTime(firstDayOfWeek.getTime() + (weekInMilliseconds*weekStart));
+			
 		var str="";
-		
+			
 		// A table to fit the full calendar
 		str+="<table>";
 		str+="<tr><th>week</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>";
 		for(var i=weekno+weekStart;i<=weekno+weekEnd;i++){
 			
-				str+="<tr>";
+				if(i==weekno){
+						str+="<tr class='curr' >";				
+				}else{
+						str+="<tr>";						
+				}
+
 
 				str+="<td>";
 				str+="<div class='weekno' >";
@@ -381,6 +401,7 @@ function showdata()
 						currDay.setDate(currDay.getDate()+1);
 					
 						str+="<td>";
+						str+="<div class='dayte'>"+day+"/"+month+"</div>";
 						str+="<div class='sched' id='s"+datumet+"' >";
 					
 
@@ -415,7 +436,7 @@ function showdata()
 		setTimeout(function(){ refreshit(); }, 600000);
 	
 		if (typeof startupCanvas == 'function') { 
-			startupCanvas(); 
+			// startupCanvas(); 
 		}
 	
 		document.getElementById("datedisp").innerHTML=str;
