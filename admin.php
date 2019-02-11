@@ -130,36 +130,10 @@ body{
 								print_r($error);
 						}else{
 								$rows = $result->fetchAll();	
-								// Add interface for deleting elements
-								echo "<div id='leftOver'><table>";
 								foreach($rows as $row){
 										$dag=json_decode($row['datan'],true);
 										$dbarr[$row['datum']]=$dag;
-
-										foreach ($dag as $key => $dd) {
-												if(isset($dd['Starttid'])){
-														echo "<tr>";
-														echo "<td>".$row['datum']."</td>";
-														echo "<td>".$dd['Starttid']."</td>";
-														echo "<td>-</td>";	
-														echo "<td>".$dd['Sluttid']."</td>";
-													  echo "<td>".substr($dd['Benamning'],0,12)."</td>";
-														echo "<td>";
-														echo "<form method='post' action='admin.php' style='margin:0px;padding:0px;'>";
-														echo "<input type='hidden' name='cmd' value='DEL'>";
-														echo "<input type='hidden' name='Startdatum' value='".$row['datum']."'>";
-														echo "<input type='hidden' name='Starttid' value='".$dd['Starttid']."'>";
-														echo "<input type='hidden' name='Sluttid' value='".$dd['Sluttid']."'>";	
-														echo "<input type='submit' value='&#10008;'>";
-														echo "</form>";
-														echo "</td>";
-														echo "</tr>";										
-												}
-										}
-
 								}
-								echo "</table>";
-								echo "</div>";
 						}
 	
 						// Make delete / Update before we show table
@@ -199,9 +173,8 @@ body{
 						}else if($startdatum!="UNK"&&$cmd=='DEL'){
 								if(isset($dbarr[$startdatum])){
 										$barr=Array();
-										$dbarr[$row['datum']]=$dag;
+										$dag=$dbarr[$startdatum];
 										foreach ($dag as $key => $dd) {
-												// echo $dd['Starttid']."==".$starttid."&&".$dd['Sluttid']."==".$sluttid;;
 												if(($dd['Starttid']==$starttid)){
 
 												}else{
@@ -238,6 +211,46 @@ body{
 						echo "  <tr><td><button>Store</button></td></tr>";		
 						echo "</table>";
 						echo "</form>";
+					
+						// Show editing interface for updated database
+						$dbarr= array();
+						$result = $log_db->query('SELECT * FROM sched order by datum desc;');
+						if (!$result) {
+								$error = $log_db->errorInfo();
+								print_r($error);
+						}else{
+								$rows = $result->fetchAll();	
+								// Add interface for deleting elements
+								echo "<div id='leftOver'><table>";
+								foreach($rows as $row){
+										$dag=json_decode($row['datan'],true);
+										$dbarr[$row['datum']]=$dag;
+
+										foreach ($dag as $key => $dd) {
+												if(isset($dd['Starttid'])){
+														echo "<tr>";
+														echo "<td>".$row['datum']."</td>";
+														echo "<td>".$dd['Starttid']."</td>";
+														echo "<td>-</td>";	
+														echo "<td>".$dd['Sluttid']."</td>";
+													  echo "<td>".substr($dd['Benamning'],0,12)."</td>";
+														echo "<td>";
+														echo "<form method='post' action='admin.php' style='margin:0px;padding:0px;'>";
+														echo "<input type='hidden' name='cmd' value='DEL'>";
+														echo "<input type='hidden' name='Startdatum' value='".$row['datum']."'>";
+														echo "<input type='hidden' name='Starttid' value='".$dd['Starttid']."'>";
+														echo "<input type='hidden' name='Sluttid' value='".$dd['Sluttid']."'>";	
+														echo "<input type='submit' value='&#10008;'>";
+														echo "</form>";
+														echo "</td>";
+														echo "</tr>";										
+												}
+										}
+
+								}
+								echo "</table>";
+								echo "</div>";
+						}
 
 				}
 			
