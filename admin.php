@@ -171,12 +171,12 @@ body{
 								$item['Slutdatum']=$slutdatum;
 								$item['Sluttid']=$sluttid;
 								$item['Lokal']=$lokal;
-								$item['Benamning']=$benamning;
+								$item['Benamning']=urlencode($benamning);
 								$item['Grupp']=$grupp;
 								$item['Tillfalle']=$tillfalle;
 								$item['Signatur']=$signatur;
-								$item['Aktivitet']=$aktivitet;
-								$item['Kommentar']=$kommentar;					
+								$item['Aktivitet']=urlencode($aktivitet);
+								$item['Kommentar']=urlencode($kommentar);					
 
 								// Add or update data
 								if(isset($dbarr[$startdatum])){
