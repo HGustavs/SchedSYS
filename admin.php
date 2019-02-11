@@ -224,8 +224,6 @@ body{
 								echo "<div id='leftOver'><table>";
 								foreach($rows as $row){
 										$dag=json_decode($row['datan'],true);
-										$dbarr[$row['datum']]=$dag;
-
 										foreach ($dag as $key => $dd) {
 												if(isset($dd['Starttid'])){
 														echo "<tr>";
@@ -233,7 +231,7 @@ body{
 														echo "<td>".$dd['Starttid']."</td>";
 														echo "<td>-</td>";	
 														echo "<td>".$dd['Sluttid']."</td>";
-													  echo "<td>".substr($dd['Benamning'],0,12)."</td>";
+													  echo "<td>".urldecode(substr($dd['Benamning'],0,12))."</td>";
 														echo "<td>";
 														echo "<form method='post' action='admin.php' style='margin:0px;padding:0px;'>";
 														echo "<input type='hidden' name='cmd' value='DEL'>";

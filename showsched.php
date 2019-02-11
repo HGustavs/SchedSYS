@@ -415,9 +415,9 @@ function showdata()
 										var endy=(timetopix(ditem['Sluttid'])*30)-starty;
 
 										str+="<div class='timeslot' style='top:"+starty+"px;height:"+endy+"px'>";
-										str+=ditem['Benamning'];
+										str+=decodeURIComponent(ditem['Benamning']).replace("+"," ");
 										str+="<br>";
-										str+=ditem['Lokal'];									
+										str+=decodeURIComponent(ditem['Lokal']).replace("+"," ");									
 										str+="</div>"
 								}
 						}
