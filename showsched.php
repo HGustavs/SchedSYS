@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
- 
 <head>
+<meta charset="UTF-8"> 
 	
 <script src="canvas.js"></script> 
 			
@@ -336,6 +337,13 @@ function timetopix(tidstr)
 
 var result = getWeekNumber(new Date());
 	
+function decleanup(str)
+{
+		var retstr=decodeURIComponent(str.replace(/__/g, "&").replace(/\.\./g, ";"));
+		retstr=retstr.replace(/\+/g, " ");
+		return retstr;
+}
+	
 function showdata()
 {
 		var today=new Date();
@@ -415,7 +423,7 @@ function showdata()
 										var endy=(timetopix(ditem['Sluttid'])*30)-starty;
 
 										str+="<div class='timeslot' style='top:"+starty+"px;height:"+endy+"px'>";
-										str+=decodeURIComponent(ditem['Benamning']).replace("+"," ");
+										str+=decleanup(ditem['Benamning']);
 										str+="<br>";
 										str+=decodeURIComponent(ditem['Lokal']).replace("+"," ");									
 										str+="</div>"

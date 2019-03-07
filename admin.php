@@ -2,9 +2,10 @@
 // Start the session
 session_start();
 ?>
+<!DOCTYPE html>
 <html>
- 
 <head>
+<meta charset="UTF-8"> 
 			
 <style>
 	
@@ -13,7 +14,7 @@ body{
 		font-size:16px;
 }
 	
-	#leftover {
+	#leftOver {
 			position:absolute;
 			right:0px;
 			top:0px;
@@ -72,6 +73,14 @@ body{
 		{
 				if(isset($_POST[$name]))	return $_POST[$name];
 				else return "UNK";
+		}
+	
+		function cleanup($varstr)
+		{
+				$strvar=htmlentities($varstr);
+				$strvar=str_replace("&","__",$strvar);
+				$strvar=str_replace(";","..",$strvar);			
+				return urlencode($strvar);
 		}
 
 		date_default_timezone_set('Europe/Stockholm');
@@ -140,17 +149,18 @@ body{
 						if($startdatum!="UNK"&&$cmd=='SAVE'){
 								$barr=Array();
 								$item=Array();
+							
 								$item['Startdatum']=$startdatum;
 								$item['Starttid']=$starttid;
 								$item['Slutdatum']=$slutdatum;
 								$item['Sluttid']=$sluttid;
-								$item['Lokal']=$lokal;
-								$item['Benamning']=urlencode($benamning);
-								$item['Grupp']=$grupp;
-								$item['Tillfalle']=$tillfalle;
-								$item['Signatur']=$signatur;
-								$item['Aktivitet']=urlencode($aktivitet);
-								$item['Kommentar']=urlencode($kommentar);					
+								$item['Lokal']=cleanup($lokal);
+								$item['Benamning']=cleanup($benamning);
+								$item['Grupp']=cleanup($grupp);
+								$item['Tillfalle']=cleanup($tillfalle);
+								$item['Signatur']=cleanup($signatur);
+								$item['Aktivitet']=cleanup($benamning);
+								$item['Kommentar']=cleanup($benamning);
 
 								// Add or update data
 								if(isset($dbarr[$startdatum])){
