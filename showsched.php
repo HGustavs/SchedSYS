@@ -82,7 +82,7 @@ table{
 			left:0px;
 			overflow:hidden;
 			position:absolute;
-			width:178px;
+			width:180px;
 			background-color:#def;
 			color:black;
 			font-size:12px;
@@ -167,6 +167,8 @@ function scoreItems($source,$desto)
 		if($source['Signatur']==$desto['Signatur']) $score++;
 		if($source['Aktivitet']==$desto['Aktivitet']) $score++;
 		if($source['Kommentar']==$desto['Kommentar']) $score++;
+	
+		// echo "/*".$source['Starttid']."###".$desto['Starttid']."###".($source['Starttid']==$desto['Starttid'])."###".$score."*/\n";
 	
 		return $score;
 }
@@ -259,26 +261,36 @@ function scoreItems($source,$desto)
 											$foundcnt=$score;
 									}
 							}
+
+//							echo "\n /* ";
+//							echo "Slot";
+//							print_r($dbarr[$datumet]);
+//							echo "\n";
+//							print_r($slot);
+//							echo "\n";
+//							echo $foundcnt;
+//							echo "*/ \n";
 						
 							if($foundcnt==11){
 						  		// 11 is considered perfect match - so no database update													
-							}else if($foundcnt>7){
+							}else if($foundcnt>9){
 									// 8-10 is considered an updated match
 									$slot['changed']=date("Y-m-d");
 									$dbarr[$datumet][$foundno]=$slot;
 									$changed=true;
-							}else if($foundcnt<=7){
+							}else if($foundcnt<=9){
 									// 0-7 is considered a new entry
 									array_push($dbarr[$datumet],$slot);
 									$changed=true;
 							}
+
 					}
 				
 //					if($changed){
-//							echo "\n /* ";
-//							echo "Change";
-//							print_r($dbarr[$datumet]);
-//							echo "*/ \n";
+//						echo "\n /* ";
+//						echo "Change";
+//						print_r($dbarr[$datumet]);
+//						echo "*/ \n";
 //					}
 				
 					if($changed){
@@ -364,7 +376,7 @@ function showdata()
     var firstDayOfWeek = new Date(today);
 		firstDayOfWeek.setDate(today.getDate() - day);
 		var weekStart=-1;
-		var weekEnd=2;
+		var weekEnd=3;
 	
 		var weekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
 		currDay.setTime(firstDayOfWeek.getTime() + (weekInMilliseconds*weekStart));
@@ -441,8 +453,6 @@ function showdata()
 		}
 		str+="</table>";
 	
-		setTimeout(function(){ refreshit(); }, 600000);
-	
 		if (typeof startupCanvas == 'function') { 
 			// startupCanvas(); 
 		}
@@ -461,9 +471,9 @@ function refreshit()
 				
 </head>
 
-<body onload="showdata();">
+<body onload="setTimeout(function(){ refreshit(); }, 600000);showdata();">
 <div class='wrkap'>
-	DO IT JUST DO IT <span id='feedback'></span><br><hr><br>
+	MAKE IT HAPPEN <span id='feedback'></span><br><hr><br>
 	<div id="datedisp">
 
 	</div>
