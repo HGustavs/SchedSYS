@@ -451,8 +451,6 @@ function showdata()
 											 colnamn=collist[colno];
 										}
 
-										alert(colno+" "+colnamn+" "+benamning);
-
 										str+="<div class='timeslot' style='background:"+colnamn+";top:"+starty+"px;height:"+endy+"px'>";
 										str+=benamning;
 										str+="<br>";
