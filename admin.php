@@ -24,6 +24,10 @@ body{
 			overflow:scroll;
 	}
 
+  tr:hover{
+      background-color:#fed;
+  }
+
 </style>
 
 <script>
@@ -241,7 +245,7 @@ body{
 														echo "<td>".$dd['Starttid']."</td>";
 														echo "<td>-</td>";	
 														echo "<td>".$dd['Sluttid']."</td>";
-													  echo "<td>".urldecode(substr($dd['Benamning'],0,12))."</td>";
+													  echo "<td><div title='".urldecode($dd['Benamning'])."\n".urldecode($dd['Kommentar'])."'>".urldecode(substr($dd['Benamning'],0,12))."</div></td>";
 														echo "<td>";
 														echo "<form method='post' action='admin.php' style='margin:0px;padding:0px;'>";
 														echo "<input type='hidden' name='cmd' value='DEL'>";
