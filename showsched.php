@@ -382,6 +382,10 @@ function showdata()
 		currDay.setTime(firstDayOfWeek.getTime() + (weekInMilliseconds*weekStart));
 			
 		var str="";
+	
+		// List of benamning
+		var belist=[];
+		var collist=["#fed","#fde","#dfe","#efd","#edf","#ffd","#dff","#fdf"];
 			
 		// A table to fit the full calendar
 		str+="<table>";
@@ -433,9 +437,24 @@ function showdata()
 										
 										var starty=timetopix(ditem['Starttid'])*30;
 										var endy=(timetopix(ditem['Sluttid'])*30)-starty;
+									
+										var benamning=decleanup(ditem['Benamning']);
+									
+										colno=belist.indexOf(benamning);
+										if(colno==-1){
+												belist.push(benamning);
+												colno=belist.indexOf(benamning);
+										}
+										
+										var colnamn="#def";
+										if((colno<collist.length)&&(colno>0)){
+											 colnamn=collist[colno];
+										}
 
-										str+="<div class='timeslot' style='top:"+starty+"px;height:"+endy+"px'>";
-										str+=decleanup(ditem['Benamning']);
+										alert(colno+" "+colnamn+" "+benamning);
+
+										str+="<div class='timeslot' style='background:"+colnamn+";top:"+starty+"px;height:"+endy+"px'>";
+										str+=benamning;
 										str+="<br>";
 										str+=decodeURIComponent(ditem['Lokal']).replace("+"," ");									
 										str+="</div>"
