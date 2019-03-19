@@ -159,8 +159,8 @@ body{
 								$item['Grupp']=cleanup($grupp);
 								$item['Tillfalle']=cleanup($tillfalle);
 								$item['Signatur']=cleanup($signatur);
-								$item['Aktivitet']=cleanup($benamning);
-								$item['Kommentar']=cleanup($benamning);
+								$item['Aktivitet']=cleanup($aktivitet);
+								$item['Kommentar']=cleanup($kommentar);
 
 								// Add or update data
 								if(isset($dbarr[$startdatum])){
