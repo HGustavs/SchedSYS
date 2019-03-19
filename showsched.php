@@ -454,7 +454,13 @@ function showdata()
 										str+="<div class='timeslot' style='background:"+colnamn+";top:"+starty+"px;height:"+endy+"px'>";
 										str+=benamning;
 										str+="<br>";
-										str+=decodeURIComponent(ditem['Lokal']).replace("+"," ");									
+                    str+=decodeURIComponent(ditem['Lokal']).replace(/\+/g," ");									
+                    if(ditem['Kommentar']!=""){
+                        str+="<br>";
+                        str+="<span style='font-style:italic;font-weight:400'>";
+                        str+=decleanup(ditem['Kommentar']);
+                        str+="</span>";
+                    }
 										str+="</div>"
 								}
 						}
