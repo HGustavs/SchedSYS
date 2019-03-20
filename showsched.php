@@ -442,7 +442,7 @@ function showdata()
 									
 										colno=belist.indexOf(benamning);
 										if(colno==-1){
-												belist.push(benamning);
+												if(benamning.indexOf("andl")==-1) belist.push(benamning);
 												colno=belist.indexOf(benamning);
 										}
 										
