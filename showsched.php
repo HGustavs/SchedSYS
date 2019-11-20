@@ -8,9 +8,8 @@
 <style>
 	
 body{
-		font-family: Arial Narrow,Arial,sans-serif; 
-		font-size:20px;
-		cursor: none;
+    font-family: Arial Narrow,Arial,sans-serif; 
+    font-size:20px;
 }
 
 table{
@@ -119,7 +118,13 @@ var dataarr=
 	$log_db = new PDO('sqlite:./scheduledata.db');
 	$sql = 'CREATE TABLE IF NOT EXISTS sched(id INTEGER PRIMARY KEY,datum varchar(10), datan TEXT);';
 	$log_db->exec($sql);	
-	
+  
+    // Add uid - unique id for a particular booking in timeedit
+    // example:
+    // 180605--425820536-0@timeedit.com
+    //$sql = 'ALTER TABLE sched ADD uid VARCHAR(64);';
+    //$log_db->exec($sql);	
+
 function explodecsv($delimiter,$instr)
 {
   $csvarr=array();
@@ -183,13 +188,16 @@ function scoreItems($source,$desto)
 	// If DAY in database -- compare to see if it is a duplicate, if there are changes update database
 		
 	// General Config Stuff
-	$signature="S_GUSH";
+	$signature="S_BROM";
 	$csvcontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.csv?tab=33&object=".$signature);
-	$content=explode("\n",$csvcontent);
+	$icscontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.ics?tab=33&object=".$signature);
+    $content=explode("\n",$csvcontent);
+    $contentz=explode("\n",$icscontent);
 	$itemarr=array();
 	$dayarr=array();
 	
-	// If days are identical we 
+  // If days are identical we 
+  
 	$currentday="";
 	$currentdata=array();
 	for($i=3;$i<sizeof($content);$i++){
@@ -206,7 +214,7 @@ function scoreItems($source,$desto)
 					if(sizeof($cont)>8){
 							for($j=0;$j<sizeof($cont);$j++)
 							{
-									$elem[$names[$j]]=$cont[$j];
+									$elem[$names[$j]]=trim($cont[$j]);
 							}
 							if($elem['Startdatum']!=$currentday){
 									// Other day
@@ -224,8 +232,49 @@ function scoreItems($source,$desto)
 			}
 	}
 	if(!empty($itemarr)){
-			$dayarr[$currentday]=$itemarr;
-	}
+        $dayarr[$currentday]=$itemarr; 
+    }
+
+    $isProcessingEvent=false;
+    for($i=0;$i<sizeof($contentz);$i++){
+        
+        $cont=$contentz[$i];	
+        $cont=trim($cont);
+        if($isProcessingEvent){
+            if(strcmp($cont,"END:VEVENT")===0){
+                $isProcessingEvent=false;
+                $sday=date('Y-m-d',strtotime($elem["DTSTART"]));                
+                if(!isset($dayarr[$sday])){
+                    $dayarr[$sday]=array();
+                }
+                for($j=0;$j<sizeof($dayarr[$sday]);$j++){
+                    $csvelem=$dayarr[$sday][$j];
+                    $stime=date("H:i", strtotime($elem["DTSTART"]));
+                    $etime=date("H:i", strtotime($elem["DTEND"]));
+                    $room=trim($elem["LOCATION"]);
+                    if(strcmp($stime,$csvelem["Starttid"])===0 && strcmp($etime,$csvelem["Sluttid"])===0 && strcmp($room,$csvelem["Lokal"])===0){
+                        // We got a match -- add UID
+                        $csvelem["UID"]=$elem["UID"];
+                        $dayarr[$sday][$j]=$csvelem;
+                    }
+                }
+            }else{          
+                $tmpArr=explode(":",$cont);
+                $key=$tmpArr[0];
+                if(empty($tmpArr[1])){
+                    $value="";
+                }else{
+                    $value=$tmpArr[1];
+                }          
+                $elem[$key]=$value;
+            }
+        }else{
+            if(strcmp($cont,"BEGIN:VEVENT")===0){
+                $isProcessingEvent=true;       
+                $elem=array();   
+            }
+        }      
+    }
 
 	// Retrieve full database and swizzle into associative array for each day
 	$result = $log_db->query('SELECT * FROM sched;');
@@ -234,17 +283,16 @@ function scoreItems($source,$desto)
 	foreach($rows as $row){	
 			$dbarr[$row['datum']]=json_decode($row['datan'],true);
 	}
-	
 	// Synchronize each of the days with database - handle first day like partially complete
 	foreach($dayarr as $datumet=>$day){
 			
 			// Un-comment to view schedule data in source code
 			// echo "\n /* ";
 			// print_r($day);
-			//echo "*/ \n";
+			// echo "*/ \n";
 			
 			if(isset($dbarr[$datumet])){
-//					echo "IN DB: ".$datumet."\n";
+					// echo "IN DB: ".$datumet."\n";
 					$dbday=$dbarr[$datumet];
 					$changed=false;
 					
