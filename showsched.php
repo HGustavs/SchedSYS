@@ -190,14 +190,15 @@ function scoreItems($source,$desto)
 	// General Config Stuff
 	$signature="S_BROM";
 	$csvcontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.csv?tab=33&object=".$signature);
-	$icscontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.ics?tab=33&object=".$signature);
+    $icscontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.ics?tab=33&object=".$signature);
+    $gcontent=file_get_contents ("LINK TO GOOGLE CALENDAR ICAL FILE");    
     $content=explode("\n",$csvcontent);
     $contentz=explode("\n",$icscontent);
+    $contentzz=explode("\n",$gcontent);
 	$itemarr=array();
 	$dayarr=array();
-	
-  // If days are identical we 
-  
+	  
+    // TimeEdit csv
 	$currentday="";
 	$currentdata=array();
 	for($i=3;$i<sizeof($content);$i++){
@@ -235,6 +236,7 @@ function scoreItems($source,$desto)
         $dayarr[$currentday]=$itemarr; 
     }
 
+    // TimeEdit iCal
     $isProcessingEvent=false;
     for($i=0;$i<sizeof($contentz);$i++){
         
@@ -276,29 +278,71 @@ function scoreItems($source,$desto)
         }      
     }
 
+    // Google iCal
+    $isProcessingEvent=false;
+    for($i=0;$i<sizeof($contentzz);$i++){
+        
+        $cont=$contentzz[$i];	
+        $cont=trim($cont);
+        if($isProcessingEvent){
+            if(strcmp($cont,"END:VEVENT")===0){
+                $isProcessingEvent=false;
+                $sday=date('Y-m-d',strtotime($elem["DTSTART"]));                
+                if(!isset($dayarr[$sday])){
+                    $dayarr[$sday]=array();
+                }
+                $stime=date("H:i", strtotime($elem["DTSTART"]));
+                $etime=date("H:i", strtotime($elem["DTEND"]));
+                $room=trim($elem["LOCATION"]);
+                $summary=trim($elem["SUMMARY"]);
+                $comment=trim($elem["DESCRIPTION"]);
+                $sday=date('Y-m-d',strtotime($elem["DTSTART"]));               
+                $eday=date('Y-m-d',strtotime($elem["DTEND"]));               
+                $cday=date('Y-m-d H:i:s',strtotime($elem["CREATED"]));               
+                $mday=date('Y-m-d H:i:s',strtotime($elem["LAST-MODIFIED"]));               
+                array_push($dayarr[$sday],array("Starttid"=>$stime,"Sluttid"=>$etime,"Lokal"=>$room,"UID"=>$elem["UID"],"Benamning"=>$summary, "Kommentar"=>$comment, "Skapad"=>$comment, "Uppdaterad"=>$mday));
+            }else{          
+                $tmpArr=explode(":",$cont);
+                $key=$tmpArr[0];
+                if(empty($tmpArr[1])){
+                    $value="";
+                }else{
+                    $value=$tmpArr[1];
+                }          
+                $elem[$key]=$value;
+            }
+        }else{
+            if(strcmp($cont,"BEGIN:VEVENT")===0){
+                $isProcessingEvent=true;       
+                $elem=array();   
+            }
+        }      
+    }
+
 	// Retrieve full database and swizzle into associative array for each day
 	$result = $log_db->query('SELECT * FROM sched;');
 	$rows = $result->fetchAll();	
-	$dbarr= array();
+    $dbarr= array();
 	foreach($rows as $row){	
-			$dbarr[$row['datum']]=json_decode($row['datan'],true);
+            $dbarr[$row['datum']]=json_decode($row['datan'],true);
 	}
-	// Synchronize each of the days with database - handle first day like partially complete
+    // Synchronize each of the days with database - handle first day like partially complete
+    // TODO: Make use of the UID to keep track of updated or deleted bookings
 	foreach($dayarr as $datumet=>$day){
 			
 			// Un-comment to view schedule data in source code
 			// echo "\n /* ";
 			// print_r($day);
-			// echo "*/ \n";
+            // echo "*/ \n";
 			
 			if(isset($dbarr[$datumet])){
 					// echo "IN DB: ".$datumet."\n";
 					$dbday=$dbarr[$datumet];
 					$changed=false;
-					
+                    
 					// For each slot in current day
 					foreach($day as $slot){
-						
+                                                
 							$foundno=-1;
 							$foundcnt=0;
 							for($i=0;$i<sizeof($dbday);$i++){
