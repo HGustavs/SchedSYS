@@ -36,7 +36,8 @@ function showdata() {
     var currm = today.getMinutes()
     if (currm < 10) currm = "0" + currm;
     //document.getElementById("feedback").innerHTML = currh + ":" + currm;
-    document.getElementById("feedback").innerHTML = new Date(service.called_service.date);
+    let d=new Date(service.called_service.date);
+    document.getElementById("feedback").innerHTML = d.toLocaleDateString("sv-SE")+" "+d.toLocaleTimeString("sv-SE");
 
     var currDay = new Date();
     today.setHours(12, 00, 00);
