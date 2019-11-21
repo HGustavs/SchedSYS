@@ -1,3 +1,3 @@
 <?php	
-header("Refresh:0; url=showsched.php");
+    header("Refresh:0; url=showsched.php");
 ?>
