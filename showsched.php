@@ -1,3 +1,6 @@
+<?php
+    include("config.php");
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -191,7 +194,7 @@ function scoreItems($source,$desto)
 	$signature="S_BROM";
 	$csvcontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.csv?tab=33&object=".$signature);
     $icscontent=file_get_contents ("https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.ics?tab=33&object=".$signature);
-    $gcontent=file_get_contents ("LINK TO GOOGLE CALENDAR ICAL FILE");    
+    $gcontent=file_get_contents (GOOGLE_ICAL);    
     $content=explode("\n",$csvcontent);
     $contentz=explode("\n",$icscontent);
     $contentzz=explode("\n",$gcontent);

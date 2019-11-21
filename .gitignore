@@ -2,3 +2,5 @@
 *.db
 history.csv
 .DS_Store
+
+config.php

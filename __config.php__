@@ -1,0 +1,6 @@
+// 1) Add your secret link to Google ical
+// 2) Rename file to: config.php
+//
+<?php
+    define("GOOGLE_ICAL","add secret link to google ical");
+?>
