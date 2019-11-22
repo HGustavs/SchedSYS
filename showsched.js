@@ -1,6 +1,7 @@
 var service =[];
 var result = getWeekNumber(new Date());
 var auto_update=null;
+var uidArr=[];
 
 function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -133,6 +134,12 @@ function showdata() {
                         str += decleanup(ditem['Kommentar']);
                         str += "</span>";
                     }
+                    if (typeof ditem['Uppdaterad']!=="undefined") {
+                        str += "<br>";
+                        str += "<span style='font-size:small;font-style:italic;font-weight:400'>";
+                        str += decleanup(ditem['Uppdaterad']);
+                        str += "</span>";
+                    }
                     str += "</div>"
                 }
             }
@@ -160,7 +167,7 @@ function showdata() {
 
 function getData() {
     let op = "DEFAULT";
-    let params = { "start_week": -2, "end_week": 2, "åäö": "124312,asddasdkjafjhadjkhf    &&&adas " };
+    let params = { "start_week": -2, "end_week": 2};
     var jqxhr = $.ajax({
         type: 'POST',
         url: 'showsched_service.php',
@@ -176,10 +183,80 @@ function getData() {
         });
 }
 
+function getDataDump() {
+    let op = "dump";
+    let params = {};
+    var jqxhr = $.ajax({
+        type: 'POST',
+        url: 'showsched_service.php',
+        dataType: 'json',
+        data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
+    })
+        .done(data_returned)
+        .fail(function (e) {
+            console.log("AJAX Error:", e)
+        })
+        .always(function () {
+            //alert( "complete" );
+        });
+}
+
+
 function data_returned(ret) {
     if (typeof ret.data !== "undefined") {
         service=ret;
-        showdata();
+        if(service.called_service.name==="DEFAULT"){
+            showdata();
+        }else if(service.called_service.name==="dump"){
+            let dataDumpArr=[];
+            for(let i=0;i<service.data.db.length;i++){
+                let dayArr=service.data.db[i];
+                for(let j=0;j<dayArr.length;j++){
+                    let dayObj=dayArr[j];
+                    /*
+                        Aktivitet: "Seminarium"
+                        Benamning: "Webbprogrammering G1F, 7.5hp"
+                        Grupp: ""
+                        Kommentar: "Slutseminarium"
+                        Lokal: "E102"
+                        Signatur: "Henrik Gustavsson, Marcus Brohede"
+                        Slutdatum: "2018-12-19"
+                        Sluttid: "12:00"
+                        Startdatum: "2018-12-19"
+                        Starttid: "08:15"
+                        Tillfalle: "ITBIG16h, SYVEG16h, WEBUG17h"
+                    */
+                    let itemArr=[];                    
+                    itemArr.push(dayObj.Startdatum);
+                    itemArr.push(dayObj.Starttid);
+                    itemArr.push(dayObj.Sluttid);
+                    itemArr.push(dayObj.Slutdatum);
+                    itemArr.push(dayObj.Lokal);
+                    itemArr.push(dayObj.Aktivitet);
+                    itemArr.push(dayObj.Benamning);
+                    itemArr.push(dayObj.Grupp);
+                    itemArr.push(dayObj.Signatur);
+                    itemArr.push(dayObj.Tillfalle);
+                    itemArr.push(dayObj.Uppdaterad);
+                    itemArr.push(dayObj.Skapad);
+                    itemArr.push(dayObj.UID);
+                    dataDumpArr.push(itemArr);    
+                    uidArr.push(dayObj.UID);
+                }
+            }
+            console.log(dataDumpArr);
+            console.log(uidArr)
+            console.log(service.data.update);
+            for(let k=0;k<service.data.update.length;k++){
+                let update=service.data.update[k];                                
+                console.log(update);
+                if(uidArr.indexOf(update.UID)){
+                    console.log("Found UID:"+update.UID);
+                }else{
+                    console.log("Did NOT find UID:"+update.UID);
+                }
+            }
+        }
     } else {
         alert("Error receiveing data!");
     }
