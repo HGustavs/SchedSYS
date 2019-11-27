@@ -168,11 +168,13 @@ if (strcmp($op, "DEFAULT") === 0) {
                     $csvelem = $dayarr[$sday][$j];
                     $stime = date("H:i", strtotime($elem["DTSTART"]));
                     $etime = date("H:i", strtotime($elem["DTEND"]));
+                    $mday = date('Y-m-d H:i:s', strtotime($elem["LAST-MODIFIED"]));
                     $room = trim($elem["LOCATION"]);
                     if (strcmp($stime, $csvelem["Starttid"]) === 0 && strcmp($etime, $csvelem["Sluttid"]) === 0 && strcmp($room, $csvelem["Lokal"]) === 0) {
                         // We got a match -- add UID
                         $csvelem["UID"] = $elem["UID"];
                         $dayarr[$sday][$j] = $csvelem;
+                        $csvelem["Uppdaterad"]=$mday;
                         array_push($updateuidarr, $elem["UID"]);
                         array_push($updatearr, $csvelem);
                     }
@@ -311,7 +313,12 @@ if (strcmp($op, "DEFAULT") === 0) {
         array_merge($futureuidarr, $pastuidarr);
         $idx_future = array_search($updateuid, $futureuidarr);
         $datumet = $ubooking["Startdatum"];
-        $day = $dbarr[$datumet];
+        if(isset($dbarr[$datumet])){
+            $day = $dbarr[$datumet];
+        }else{
+            $day=array();
+        }
+        
         if ($idx_future !== false) {
             // Found booking in db, check if update is needed
             $dbbooking = $futurearr[$idx_future];
@@ -647,3 +654,4 @@ $ret = array(
 
 header('Content-type: application/json');
 echo json_encode($ret);
+?>
