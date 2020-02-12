@@ -1,6 +1,3 @@
-<html>
-<body>
-<pre>
 <?php
 
 function isprog($str)
@@ -108,10 +105,6 @@ foreach ($entries->childNodes as $entry){
 				// echo "<br>".$entry->tagName;
 		}
 }
-
-print_r($oentries);
-
+header('Content-Type: application/json');
+echo json_encode($oentries);
 ?>
-</pre>
-</body>
-</html>
