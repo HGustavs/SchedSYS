@@ -174,13 +174,13 @@ function getData() {
         dataType: 'json',
         data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
     })
-        .done(data_returned)
-        .fail(function (e) {
-            console.log("AJAX Error:", e)
-        })
-        .always(function () {
-            //alert( "complete" );
-        });
+		.done(data_returned)
+		.fail(function (e) {
+				alert(e.responseText);
+		})
+		.always(function () {
+				//alert( "complete" );
+		});
 }
 
 function getDataDump() {
@@ -192,13 +192,14 @@ function getDataDump() {
         dataType: 'json',
         data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
     })
-        .done(data_returned)
-        .fail(function (e) {
-            console.log("AJAX Error:", e)
-        })
-        .always(function () {
-            //alert( "complete" );
-        });
+		.done(data_returned)
+		.fail(function (e) {
+				// console.log("AJAX Error:", e);
+				alert(e.responseText);
+		})
+		.always(function () {
+				//alert( "complete" );
+		});
 }
 
 
