@@ -4,13 +4,14 @@ var auto_update=null;
 var uidArr=[];
 
 var mb,startX,startY;
-var startTop;
+var startTop,startLeft;
 
 function mdown(event)
 {
 		startX=event.clientX;
 		startY=event.clientY;
 		startTop=parseInt(event.target.style.top.substring(0, event.target.style.top.length - 1));
+		startLeft=parseInt(event.target.style.left.substring(0, event.target.style.left.length - 1));
 	
 		mb=1;
 //		console.log(event);
@@ -22,11 +23,14 @@ function mup(event)
 		deltaY=startY-event.clientY;
 
 		var newy=Math.floor((startTop-deltaY)/15)*15;
+		var newx=Math.floor((startLeft-deltaX)/184)*184;
 		if(newy<0) newy=0;
 	
 		mb=0;
 	
 		event.target.style.top=newy+"px";
+		event.target.style.left=newx+"px";
+
 }
 
 function mmoving(event)
@@ -36,10 +40,13 @@ function mmoving(event)
 				deltaY=startY-event.clientY;
 
 				var newy=Math.floor((startTop-deltaY)/15)*15;
+				var newx=Math.floor((startLeft-deltaX)/184)*184;
+				if(newy<0) newy=0;
 			
 				if(newy<0) newy=0;
 
 				event.target.style.top=newy+"px";
+				event.target.style.left=newx+"px";
 		}
 }
 
@@ -163,7 +170,7 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";
+                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";
                     str += benamning;
                     str += "<br>";
                     str += ditem['lokal'];
