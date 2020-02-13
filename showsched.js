@@ -1,7 +1,12 @@
-var service =[];
+var service = [];
 var result = getWeekNumber(new Date());
-var auto_update=null;
-var uidArr=[];
+var auto_update = null;
+var uidArr = [];
+
+function fab_action()
+{
+    alert("Function not yet implemented.");
+}
 
 function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -165,16 +170,16 @@ function getData() {
     var jqxhr = $.ajax({
         type: 'POST',
         url: 'showsched_service_new.php',
-        dataType: 'json',
-        data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
-    })
-		.done(data_returned)
-		.fail(function (e) {
-				alert(e.responseText);
-		})
-		.always(function () {
-				//alert( "complete" );
-		});
+            dataType: 'json',
+            data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
+        })
+        .done(data_returned)
+        .fail(function (e) {
+            alert(e.responseText);
+        })
+        .always(function () {
+            //alert( "complete" );
+        });
 }
 
 function data_returned(ret) {
