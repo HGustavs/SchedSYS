@@ -155,6 +155,7 @@ function showdata() {
                     var ditem = JSON.parse(service.data[datumet][k]);
                     var starty = timetopix(ditem['starttid']) * 30;
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
+										var itemid = ditem['id'];
 									
 										var benamning = ditem['kursben'];
 										if(typeof benamning == "undefined") benamning="";
@@ -170,7 +171,11 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";
+										if(itemid.length>8){
+												str += "<div class='timeslot' style='background:#dfd;top:" + starty + "px;height:" + endy + "px;left:0px;' >";
+										}else{
+												str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";										
+										}
                     str += benamning;
                     str += "<br>";
                     str += ditem['lokal'];
