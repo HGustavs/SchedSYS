@@ -120,6 +120,10 @@
             background-color: #eb4;
             box-shadow: 6px 6px 10px #888;
         }
+			
+				.icalelement{
+						background-image: radial-gradient(ellipse farthest-corner at 45px 45px, rgba(50, 50, 50, 0.8) 0%, rgba(80, 80, 80, 0.2) );
+				}
     </style>
 
 </head>
