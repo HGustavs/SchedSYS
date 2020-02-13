@@ -64,6 +64,8 @@ function showdata() {
     str += "<table>";
     str += "<tr><th>week</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>";
     for (var i = weekno + weekStart; i <= weekno + weekEnd; i++) {
+			
+				alert(i);
 
         if (i == weekno) {
             str += "<tr class='curr' >";
@@ -106,13 +108,16 @@ function showdata() {
 
             if (typeof service.data[datumet] != "undefined") {
                 for (var k = 0; k < service.data[datumet].length; k++) {
-                    var ditem = service.data[datumet][k];
+                    var ditem = JSON.parse(service.data[datumet][k]);
 
-                    var starty = timetopix(ditem['Starttid']) * 30;
-                    var endy = (timetopix(ditem['Sluttid']) * 30) - starty;
-
-                    var benamning = decleanup(ditem['Benamning']);
-
+										console.log(ditem['starttid']);
+									
+                    var starty = timetopix(ditem['starttid']) * 30;
+                    var endy = (timetopix(ditem['sluttid']) * 30) - starty;
+									
+										var benamning = ditem['kursben'];
+										
+										console.log(benamning);
                     colno = belist.indexOf(benamning);
                     if (colno == -1) {
                         if (benamning.indexOf("andl") == -1) belist.push(benamning);
@@ -127,17 +132,17 @@ function showdata() {
                     str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'>";
                     str += benamning;
                     str += "<br>";
-                    str += decodeURIComponent(ditem['Lokal']).replace(/\+/g, " ");
+                    str += ditem['lokal'];
                     if (ditem['Kommentar'] != "") {
                         str += "<br>";
                         str += "<span style='font-style:italic;font-weight:400'>";
-                        str += decleanup(ditem['Kommentar']);
+                        str += ditem['kommentar'];
                         str += "</span>";
                     }
                     if (typeof ditem['Uppdaterad']!=="undefined") {
                         str += "<br>";
                         str += "<span style='font-size:small;font-style:italic;font-weight:400'>";
-                        str += decleanup(ditem['Uppdaterad']);
+                        str += ditem['uppdaterad'];
                         str += "</span>";
                     }
                     str += "</div>"
@@ -170,7 +175,7 @@ function getData() {
     let params = { "start_week": -2, "end_week": 2};
     var jqxhr = $.ajax({
         type: 'POST',
-        url: 'showsched_service.php',
+        url: 'showsched_service_new.php',
         dataType: 'json',
         data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
     })
@@ -188,7 +193,7 @@ function getDataDump() {
     let params = {};
     var jqxhr = $.ajax({
         type: 'POST',
-        url: 'showsched_service.php',
+        url: 'showsched_service_new.php',
         dataType: 'json',
         data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
     })
@@ -206,7 +211,9 @@ function getDataDump() {
 function data_returned(ret) {
     if (typeof ret.data !== "undefined") {
         service=ret;
-        if(service.called_service.name==="DEFAULT"){
+				alert(service.called_service.name);			
+        showdata();			
+        if(service.called_service.name==="Gladpack"){
             showdata();
         }else if(service.called_service.name==="dump"){
             let dataDumpArr=[];
