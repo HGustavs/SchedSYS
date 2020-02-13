@@ -1,5 +1,5 @@
 <?php
-
+include_once('config.php');
 function isprog($str)
 {
 		if (strlen($str)==11&&is_numeric(substr($str,-6,2))) return true;
@@ -43,6 +43,7 @@ $oentry=Array();
 // $file = 'https://cloud.timeedit.net/his/web/schema/ri107565X25Z03Q5Z56g2Yh0yZ026Y18Q0AgQY6Q5675c570nyu2Qu.xml';
 
 $file = 'https://cloud.timeedit.net/his/web/schema/ri107475X45Z03Q0Z56g2Y00y6026Y11Q02gQY6Q56757.xml';
+$delta = 'https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.xml?tab=33&object='.SIGNATURE;
 
 $dom = new DomDocument;
 $dom->preserveWhiteSpace = FALSE;
@@ -54,9 +55,10 @@ foreach ($entries->childNodes as $entry){
 		if($entry->tagName=="entry"){
 				foreach ($entry->childNodes as $gentry){
 						if($gentry->tagName=="title"){
+                                $oentry=array("startdatum" => "", "starttid" => "", "sluttid" => "","lokal" => "", "id" => "", "uppdaterad" => "","kursben" => "","aktivitet" => "","kommentar" => "", "signatur" => "", "program" => "", "grupp" => "");
 								$oentry['startdatum']=substr($gentry->nodeValue,0,10);
 								$oentry['starttid']=substr($gentry->nodeValue,11,5);
-								$oentry['sluttid']=substr($gentry->nodeValue,19,5);
+                                $oentry['sluttid']=substr($gentry->nodeValue,19,5);
 								if(islokal(substr($gentry->nodeValue,-4,4))) $oentry['lokal']=substr($gentry->nodeValue,-4,4);
 						}else if($gentry->tagName=="id"){
 								$inneritems=explode(":",$gentry->nodeValue);
@@ -107,4 +109,3 @@ foreach ($entries->childNodes as $entry){
 }
 header('Content-Type: application/json');
 echo json_encode($oentries);
-?>
