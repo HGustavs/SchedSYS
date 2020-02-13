@@ -4,19 +4,25 @@ var auto_update=null;
 var uidArr=[];
 
 var startX,startY;
+var startTop;
 
 function mdown(event)
 {
 		startX=event.clientX;
 		startY=event.clientY;
+		startTop=parseInt(event.target.style.top.substring(0, event.target.style.top.length - 1));
 //		console.log(event);
 }
 
 function mup(event)
 {
 		deltaX=startX-event.clientX;
-		deltaY=startY-event.clientY;	
-		alert(deltaX+" "+deltaY);
+		deltaY=startY-event.clientY;
+
+		var newy=(startTop-deltaY);
+		if(newy<0) newy=0;
+	
+		event.target.style.top=newy+"px";
 }
 
 function mmoving(event)
