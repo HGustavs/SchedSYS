@@ -122,7 +122,6 @@
 
     <canvas id="canvas" width="450" height="125">
     </canvas>
-    <button onclick="getDataDump();">Get data dump</button>
 
 </body>
 

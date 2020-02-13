@@ -24,6 +24,11 @@ function mmoving(event)
 		// console.log(event);
 }
 
+function fab_action()
+{
+    alert("Function not yet implemented.");
+}
+
 function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));

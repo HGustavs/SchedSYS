@@ -136,7 +136,8 @@
 
     <canvas id="canvas" width="450" height="125">
     </canvas>
-    <button onclick="getDataDump();">Get data dump</button>
+	
+    <div id="fab" onclick="fab_action();">+</div>
 
 </body>
 
