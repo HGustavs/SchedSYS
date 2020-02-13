@@ -52,7 +52,11 @@ function mmoving(event)
 
 function fab_action()
 {
-    alert("Function not yet implemented.");
+    if(document.getElementById("options-pane").className=="show-options-pane"){
+        document.getElementById("options-pane").className="hide-options-pane";
+    }else{
+        document.getElementById("options-pane").className="show-options-pane";
+    }    
 }
 
 function getWeekNumber(d) {
