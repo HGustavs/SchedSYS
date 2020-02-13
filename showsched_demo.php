@@ -146,7 +146,10 @@
         .hide-options-pane {
             right: -310px;
         }
-        
+        .selected-entry {
+            box-shadow: 6px 6px 10px #888;
+        }
+
     </style>
 
 </head>

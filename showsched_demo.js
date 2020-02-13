@@ -12,7 +12,9 @@ function mdown(event)
 		startY=event.clientY;
 		startTop=parseInt(event.target.style.top.substring(0, event.target.style.top.length - 1));
 		startLeft=parseInt(event.target.style.left.substring(0, event.target.style.left.length - 1));
-	
+    
+        event.target.className+=" selected-entry";
+        
 		mb=1;
 //		console.log(event);
 }
@@ -31,6 +33,9 @@ function mup(event)
 		event.target.style.top=newy+"px";
 		event.target.style.left=newx+"px";
 
+        cls=event.target.className;
+        cls=cls.replace(" selected-entry","");
+        event.target.className=cls;
 }
 
 function mmoving(event)
@@ -175,11 +180,11 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-										if(itemid.length>8){
-												str += "<div class='timeslot' class='icalelement' style='background:#dfd;top:" + starty + "px;height:" + endy + "px;left:0px;' >";
-										}else{
-												str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";										
-										}
+                    if(itemid.length>8){
+                            str += "<div class='timeslot icalelement' style='top:" + starty + "px;height:" + endy + "px;left:0px;' >";
+                    }else{
+                            str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";										
+                    }
                     str += benamning;
                     str += "<br>";
                     str += ditem['lokal'];
