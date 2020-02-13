@@ -181,7 +181,12 @@ function showdata() {
                     }
 
                     if(itemid.length>8){
-                            str += "<div class='timeslot icalelement' style='top:" + starty + "px;height:" + endy + "px;left:0px;' >";
+                            cls="";
+                            if(document.getElementById("box6").checked == true){
+                                cls="hide";
+                            }
+                            str += "<div class='timeslot icalelement "+cls+"' style='top:" + starty + "px;height:" + endy + "px;left:0px;' >";
+
                     }else{
                             str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px;left:0px;' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";										
                     }

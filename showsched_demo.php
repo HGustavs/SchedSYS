@@ -127,7 +127,7 @@
 				}
 
 				#options-pane {
-            position: absolute;
+            position: fixed;
             top:10px;
             width:280px;
             bottom: 120px;
@@ -149,7 +149,9 @@
         .selected-entry {
             box-shadow: 6px 6px 10px #888;
         }
-
+        .hide {
+            display:none;
+        }
     </style>
 
 </head>
@@ -183,7 +185,7 @@
 
             <fieldset>
                 <legend>Sync Options</legend>
-                <div><input id="box6" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
+                <div><input id="box6" onchange="showdata()" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
                 <div><input id="box7" type="checkbox"><label for="box7">Use optimistic sync</label></div>            
             </fieldset>
         </div>
