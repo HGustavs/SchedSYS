@@ -118,7 +118,7 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'>";
+                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px' onmousemove='mmoving(event);' onmousedown='mdown(event);' onmouseup='mup(event);' >";
                     str += benamning;
                     str += "<br>";
                     str += ditem['lokal'];
