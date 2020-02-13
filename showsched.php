@@ -6,7 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script src="canvas.js"></script>
     <script src="showsched.js"></script>
-    
+
     <style>
         body {
             font-family: Arial Narrow, Arial, sans-serif;
@@ -106,6 +106,19 @@
             width: 900px;
             height: 250px;
         }
+        #fab {
+            position: fixed;
+            bottom: 30px;
+            right:30px;
+            width:80px;
+            height:80px;
+            font-size:36px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 40px;
+            background-color: #eb4;
+            box-shadow: 6px 6px 10px #888;
+        }
     </style>
 
 </head>
@@ -123,7 +136,7 @@
     <canvas id="canvas" width="450" height="125">
     </canvas>
     <button onclick="getDataDump();">Get data dump</button>
-
+    <div id="fab">+</div>
 </body>
 
 </html>
