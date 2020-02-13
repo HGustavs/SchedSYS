@@ -3,7 +3,7 @@ var result = getWeekNumber(new Date());
 var auto_update=null;
 var uidArr=[];
 
-var startX,startY;
+var mb,startX,startY;
 var startTop;
 
 function mdown(event)
@@ -11,6 +11,8 @@ function mdown(event)
 		startX=event.clientX;
 		startY=event.clientY;
 		startTop=parseInt(event.target.style.top.substring(0, event.target.style.top.length - 1));
+	
+		mb=1;
 //		console.log(event);
 }
 
@@ -22,12 +24,22 @@ function mup(event)
 		var newy=(startTop-deltaY);
 		if(newy<0) newy=0;
 	
+		mb=0;
+	
 		event.target.style.top=newy+"px";
 }
 
 function mmoving(event)
 {
-		// console.log(event);
+		if(mb){
+				deltaX=startX-event.clientX;
+				deltaY=startY-event.clientY;
+
+				var newy=(startTop-deltaY);
+				if(newy<0) newy=0;
+
+				event.target.style.top=newy+"px";
+		}
 }
 
 function fab_action()
