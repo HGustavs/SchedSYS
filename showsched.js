@@ -22,12 +22,6 @@ function timetopix(tidstr) {
     return h;
 }
 
-function decleanup(str) {
-    var retstr = decodeURIComponent(str.replace(/__/g, "&").replace(/\.\./g, ";"));
-    retstr = retstr.replace(/\+/g, " ");
-    return retstr;
-}
-
 function showdata() {
     var today = new Date();
 
@@ -64,10 +58,8 @@ function showdata() {
     str += "<table>";
     str += "<tr><th>week</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>";
     for (var i = weekno + weekStart; i <= weekno + weekEnd; i++) {
-			
-				alert(i);
 
-        if (i == weekno) {
+				if (i == weekno) {
             str += "<tr class='curr' >";
         } else {
             str += "<tr>";
@@ -116,8 +108,8 @@ function showdata() {
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
 									
 										var benamning = ditem['kursben'];
-										
-										console.log(benamning);
+										if(typeof benamning == "undefined") benamning="";
+									
                     colno = belist.indexOf(benamning);
                     if (colno == -1) {
                         if (benamning.indexOf("andl") == -1) belist.push(benamning);
@@ -188,6 +180,7 @@ function getData() {
 		});
 }
 
+/*
 function getDataDump() {
     let op = "dump";
     let params = {};
@@ -206,34 +199,21 @@ function getDataDump() {
 				//alert( "complete" );
 		});
 }
-
+*/
 
 function data_returned(ret) {
     if (typeof ret.data !== "undefined") {
         service=ret;
-				alert(service.called_service.name);			
         showdata();			
-        if(service.called_service.name==="Gladpack"){
+/*
+				if(service.called_service.name==="Gladpack"){
             showdata();
-        }else if(service.called_service.name==="dump"){
+				}else if(service.called_service.name==="dump"){
             let dataDumpArr=[];
             for(let i=0;i<service.data.db.length;i++){
                 let dayArr=service.data.db[i];
                 for(let j=0;j<dayArr.length;j++){
                     let dayObj=dayArr[j];
-                    /*
-                        Aktivitet: "Seminarium"
-                        Benamning: "Webbprogrammering G1F, 7.5hp"
-                        Grupp: ""
-                        Kommentar: "Slutseminarium"
-                        Lokal: "E102"
-                        Signatur: "Henrik Gustavsson, Marcus Brohede"
-                        Slutdatum: "2018-12-19"
-                        Sluttid: "12:00"
-                        Startdatum: "2018-12-19"
-                        Starttid: "08:15"
-                        Tillfalle: "ITBIG16h, SYVEG16h, WEBUG17h"
-                    */
                     let itemArr=[];                    
                     itemArr.push(dayObj.Startdatum);
                     itemArr.push(dayObj.Starttid);
@@ -265,7 +245,8 @@ function data_returned(ret) {
                 }
             }
         }
-    } else {
+*/
+		} else {
         alert("Error receiveing data!");
     }
 }
