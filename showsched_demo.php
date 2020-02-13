@@ -106,6 +106,20 @@
             width: 900px;
             height: 250px;
         }
+        
+        #fab {
+            position: fixed;
+            bottom: 30px;
+            right:30px;
+            width:80px;
+            height:80px;
+            font-size:36px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 40px;
+            background-color: #eb4;
+            box-shadow: 6px 6px 10px #888;
+        }
     </style>
 
 </head>
