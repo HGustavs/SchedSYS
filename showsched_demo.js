@@ -21,7 +21,7 @@ function mup(event)
 		deltaX=startX-event.clientX;
 		deltaY=startY-event.clientY;
 
-		var newy=(startTop-deltaY);
+		var newy=Math.floor((startTop-deltaY)/15)*15;
 		if(newy<0) newy=0;
 	
 		mb=0;
@@ -35,7 +35,8 @@ function mmoving(event)
 				deltaX=startX-event.clientX;
 				deltaY=startY-event.clientY;
 
-				var newy=(startTop-deltaY);
+				var newy=Math.floor((startTop-deltaY)/15)*15;
+			
 				if(newy<0) newy=0;
 
 				event.target.style.top=newy+"px";
