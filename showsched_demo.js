@@ -3,6 +3,27 @@ var result = getWeekNumber(new Date());
 var auto_update=null;
 var uidArr=[];
 
+var startX,startY;
+
+function mdown(event)
+{
+		startX=event.clientX;
+		startY=event.clientY;
+//		console.log(event);
+}
+
+function mup(event)
+{
+		deltaX=startX-event.clientX;
+		deltaY=startY-event.clientY;	
+		alert(deltaX+" "+deltaY);
+}
+
+function mmoving(event)
+{
+		// console.log(event);
+}
+
 function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
