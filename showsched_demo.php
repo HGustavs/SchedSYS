@@ -11,6 +11,7 @@
         body {
             font-family: Arial Narrow, Arial, sans-serif;
             font-size: 20px;
+            overflow-x: hidden;
         }
 
         table {
@@ -106,7 +107,7 @@
             width: 900px;
             height: 250px;
         }
-        
+
         #fab {
             position: fixed;
             bottom: 30px;
@@ -124,6 +125,28 @@
 				.icalelement{
 						background-image: radial-gradient(ellipse farthest-corner at 45px 45px, rgba(50, 50, 50, 0.8) 0%, rgba(80, 80, 80, 0.2) );
 				}
+
+				#options-pane {
+            position: absolute;
+            top:10px;
+            width:280px;
+            bottom: 120px;
+            z-index: 5000;
+            background-color: #eb4;
+            color:#FFF;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            box-shadow: 6px 6px 10px #888;
+            padding:10px;
+            transition: right .3s ease-in-out;
+        }
+        .show-options-pane {
+            right: 0;
+        }
+        .hide-options-pane {
+            right: -310px;
+        }
+        
     </style>
 
 </head>
@@ -142,6 +165,26 @@
     </canvas>
 	
     <div id="fab" onclick="fab_action();">+</div>
+
+    <div id="options-pane" class="hide-options-pane">
+        <h4>Options</h1>
+        <div>
+            <fieldset>
+                <legend>Calendar Options</legend>
+                <div><input id="box1" type="checkbox"><label for="box1">Highligt updates</label></div>
+                <div><input id="box2" type="checkbox"><label for="box2">Use pastel colors</label></div>
+                <div><input id="box3" type="checkbox"><label for="box3">Hide seminars</label></div>
+                <div><input id="box4" type="checkbox"><label for="box4">Hide lectures</label></div>
+                <div><input id="box5" type="checkbox"><label for="box5">Hide labs</label></div>            
+            </fieldset>
+
+            <fieldset>
+                <legend>Sync Options</legend>
+                <div><input id="box6" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
+                <div><input id="box7" type="checkbox"><label for="box7">Use optimistic sync</label></div>            
+            </fieldset>
+        </div>
+    </div>
 
 </body>
 
