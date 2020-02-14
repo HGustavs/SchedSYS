@@ -6,7 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script src="canvas.js"></script>
     <script src="showsched_demo.js"></script>
-    
+
     <style>
         body {
             font-family: Arial Narrow, Arial, sans-serif;
@@ -111,46 +111,63 @@
         #fab {
             position: fixed;
             bottom: 30px;
-            right:30px;
-            width:80px;
-            height:80px;
-            font-size:36px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            font-size: 36px;
             line-height: 80px;
             text-align: center;
             border-radius: 40px;
             background-color: #eb4;
             box-shadow: 6px 6px 10px #888;
         }
-			
-				.icalelement{
-						background-image: radial-gradient(ellipse farthest-corner at 45px 45px, rgba(50, 50, 50, 0.8) 0%, rgba(80, 80, 80, 0.2) );
-				}
 
-				#options-pane {
+        .icalelement {
+            background-image: radial-gradient(ellipse farthest-corner at 45px 45px, rgba(50, 50, 50, 0.8) 0%, rgba(80, 80, 80, 0.2));
+        }
+
+        #options-pane {
             position: fixed;
-            top:10px;
-            width:280px;
+            top: 10px;
+            width: 280px;
             bottom: 120px;
             z-index: 5000;
             background-color: #eb4;
-            color:#FFF;
+            color: #FFF;
             border-top-left-radius: 15px;
             border-bottom-left-radius: 15px;
-            box-shadow: 6px 6px 10px #888;
-            padding:10px;
+            box-shadow: 0px 6px 10px #888;
+            padding: 10px;
             transition: right .3s ease-in-out;
         }
+
+        #options-pane-button {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            width: 22px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #options-pane-content {
+            vertical-align: top;
+            display: inline-block;
+        }
+
         .show-options-pane {
             right: 0;
         }
+
         .hide-options-pane {
-            right: -310px;
+            right: -260px;
         }
+
         .selected-entry {
             box-shadow: 6px 6px 10px #888;
         }
+
         .hide {
-            display:none;
+            display: none;
         }
     </style>
 
@@ -168,26 +185,28 @@
 
     <canvas id="canvas" width="450" height="125">
     </canvas>
-	
+
     <div id="fab" onclick="fab_action();">+</div>
 
     <div id="options-pane" class="hide-options-pane">
-        <h4>Options</h1>
-        <div>
-            <fieldset>
-                <legend>Calendar Options</legend>
-                <div><input id="box1" type="checkbox"><label for="box1">Highligt updates</label></div>
-                <div><input id="box2" type="checkbox"><label for="box2">Use pastel colors</label></div>
-                <div><input id="box3" type="checkbox"><label for="box3">Hide seminars</label></div>
-                <div><input id="box4" type="checkbox"><label for="box4">Hide lectures</label></div>
-                <div><input id="box5" type="checkbox"><label for="box5">Hide labs</label></div>            
-            </fieldset>
+        <div id="options-pane-button" onclick="fab_action();"><span><</span>Options</div>
+        <div id="options-pane-content">
+            <div>
+                <fieldset>
+                    <legend>Calendar Options</legend>
+                    <div><input id="box1" type="checkbox"><label for="box1">Highligt updates</label></div>
+                    <div><input id="box2" type="checkbox"><label for="box2">Use pastel colors</label></div>
+                    <div><input id="box3" type="checkbox"><label for="box3">Hide seminars</label></div>
+                    <div><input id="box4" type="checkbox"><label for="box4">Hide lectures</label></div>
+                    <div><input id="box5" type="checkbox"><label for="box5">Hide labs</label></div>
+                </fieldset>
 
-            <fieldset>
-                <legend>Sync Options</legend>
-                <div><input id="box6" onchange="showdata()" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
-                <div><input id="box7" type="checkbox"><label for="box7">Use optimistic sync</label></div>            
-            </fieldset>
+                <fieldset>
+                    <legend>Sync Options</legend>
+                    <div><input id="box6" onchange="showdata()" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
+                    <div><input id="box7" type="checkbox"><label for="box7">Use optimistic sync</label></div>
+                </fieldset>
+            </div>
         </div>
     </div>
 
