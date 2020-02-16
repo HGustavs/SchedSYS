@@ -5,107 +5,15 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script src="canvas.js"></script>
-    <script src="showsched_demo.js"></script>
+    <script src="showcourses_demo.js"></script>
 
     <style>
+				html, body {margin: 0; height: 100%; overflow: hidden}
+			
         body {
             font-family: Arial Narrow, Arial, sans-serif;
             font-size: 20px;
             overflow-x: hidden;
-        }
-
-        table {
-            font-family: Arial Narrow, Arial, sans-serif;
-            font-size: 20px;
-            font-style: normal;
-            font-variant: normal;
-            font-weight: 700;
-            border-collapse: collapse;
-            border: 1px solid black;
-        }
-
-        th {
-            color: white;
-            background-color: #816;
-            padding: 4px;
-        }
-
-        .dayte {
-            color: white;
-            background-color: #816;
-            padding: 4px;
-            font-size: 16px;
-            text-align: center;
-
-        }
-
-        td {
-            border-left: 2px solid #816;
-            border-right: 2px solid #816;
-        }
-
-        .sched {
-            width: 180px;
-            height: 300px;
-            position: relative;
-        }
-
-        .weekno {
-            color: navy;
-        }
-
-        tr {
-            border-bottom: 2px solid #816;
-        }
-
-        .curr {
-            background-color: #f8e8f8;
-        }
-
-        .wrap {
-            transform: rotate(-90deg);
-            transform-origin: top left;
-
-            position: absolute;
-            top: 600px;
-            left: 0;
-
-            height: 1000px;
-            width: 600px;
-
-            background-color: #000;
-            color: #fff;
-
-            overflow: auto;
-        }
-
-        .timeslot {
-            left: 0px;
-            overflow: hidden;
-            position: absolute;
-            width: 180px;
-            background-color: #def;
-            color: black;
-            font-size: 12px;
-        }
-
-        .lunch {
-            overflow: hidden;
-            position: absolute;
-            left: 0px;
-            width: 180px;
-            background-image: url(lineback.svg);
-            color: black;
-            font-size: 12px;
-            border: 1px solid black;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) inset;
-        }
-
-        #canvas {
-            border: 1px solid red;
-            bottom: 0px;
-            width: 900px;
-            height: 250px;
         }
 
         #fab {
@@ -120,10 +28,6 @@
             border-radius: 40px;
             background-color: #eb4;
             box-shadow: 6px 6px 10px #888;
-        }
-
-        .icalelement {
-            background-image: radial-gradient(ellipse farthest-corner at 45px 45px, rgba(50, 50, 50, 0.8) 0%, rgba(80, 80, 80, 0.2));
         }
 
         #options-pane {
@@ -169,22 +73,39 @@
         .hide {
             display: none;
         }
+			
+				#container {
+						position:absolute;
+						left:0px;
+						top:0px;
+						border:1px dotted green;
+						width:100%;
+						height:100%;
+				}	
+			
+			.program {
+					background:#fed;
+					border: 1px solid red;
+					border-radius:3px;
+					box-shadow:2px 2px 2px #000;
+					position:absolute;
+			}
+			
+			.flexyear {
+					display: flex;
+					flex-direction: row;
+					width:100%;
+			}
+			
     </style>
 
 </head>
 
 <body onload="getData();">
-    <div class='wrkap'>
-        MAKE IT HAPPEN <span id='feedback'></span><br>
-        <hr><br>
-        <div id="datedisp">
 
-        </div>
-
-    </div>
-
-    <canvas id="canvas" width="450" height="125">
-    </canvas>
+		<div id="container" onmousedown='mdown(event)' onmouseup='mup(event)' onmousemove='mmoving(event)'>
+		THIS IS THE CONTAINER!
+		</div>
 
     <div id="fab" onclick="fab_action();">+</div>
 
@@ -193,6 +114,12 @@
         <div id="options-pane-content">
             <div>
                 <fieldset>
+                    <legend>Zoom</legend>
+                    <input type="button" value="Zoom in" onclick='zoomin();' />
+                    <input type="button" value="Zoom out" onclick='zoomout();' />									
+                </fieldset>
+
+							<fieldset>
                     <legend>Calendar Options</legend>
                     <div><input id="box1" type="checkbox"><label for="box1">Highligt updates</label></div>
                     <div><input id="box2" type="checkbox"><label for="box2">Use pastel colors</label></div>
