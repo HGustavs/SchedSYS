@@ -12,7 +12,7 @@ var data=[
 	{prognamn:"WEBUG",x:0,y:0,years:3,year:[
 			{			// Year 1
 						"4":[{"name":"Datorgrafik","hp":"7.5","spd":0.5},{"name":"Webbplatsdesign",hp:"7.5","spd":0.5}],
-						"5":[],
+						"5":[{"name":"Grundläggande programmering med C++","hp":"7.5","spd":0.5},{"name":"User Experience Design",hp:"7.5","spd":0.5}],
 						"1":[],
 						"2":[]		
 			},
@@ -116,6 +116,40 @@ function fab_action()
     }    
 }
 
+function zoomin()
+{
+		var oldzoomfact=zoomfact;
+	
+		if(zoomfact==0.125) zoomfact=0.25
+		else if(zoomfact==0.25) zoomfact=0.5
+		else if(zoomfact==0.5) zoomfact=0.75
+		else if(zoomfact==0.75) zoomfact=1.0
+		else if(zoomfact==1.0) zoomfact=1.25
+		else if(zoomfact==1.25) zoomfact=1.5
+		else if(zoomfact==1.5) zoomfact=2.0
+		else if(zoomfact==2.0) zoomfact=4.0;
+
+		// Update scroll position - missing code for determining that center of screen should remain at new zoom factor
+		showdata();
+}
+
+function zoomout()
+{
+		var oldzoomfact=zoomfact;
+	
+		if(zoomfact==0.25) zoomfact=0.125
+		else if(zoomfact==0.5) zoomfact=0.25
+		else if(zoomfact==0.75) zoomfact=0.5
+		else if(zoomfact==1.0) zoomfact=0.75
+		else if(zoomfact==1.25) zoomfact=1.0
+		else if(zoomfact==1.5) zoomfact=1.25
+		else if(zoomfact==2.0) zoomfact=1.5
+		else if(zoomfact==4.0) zoomfact=2.0;
+
+		// Update scroll position - missing code for determining that center of screen should remain at new zoom factor
+		showdata();
+}
+
 // Generate all courses at appropriate zoom level
 function showdata() {
 		var container=document.getElementById("container");
@@ -137,7 +171,7 @@ function showdata() {
 				str+="left:0px;";
 				str+="top:0px;";			
 				str+="' >";
-				str+="<div style='border-bottom:1px dashed brown;text-align:center;top:0px;font-family:arial narrow;font-weight:bold;font-size:"+Math.round(zoomfact*textheight)+"px' >"+program.prognamn+"</div>";
+				str+="<div style='box-sizing: border-box;border-bottom:1px dashed brown;text-align:center;top:0px;font-family:arial narrow;font-weight:bold;font-size:"+Math.round(zoomfact*textheight)+"px' >"+program.prognamn+"</div>";
 				
 				// Flex to get year reliably side by side
 				str+="<div class='flexyear'>";
@@ -167,7 +201,7 @@ function showdata() {
 												var course=period[l];
 												var coursew=(course.spd*coursewidth);
 												var courseh=(course.hp/15/course.spd);
-												str+="<div	style='overflow:hidden;border:1px solid red;background:#fff;position:absolute;box-shadow:2px 2px 2px RGBA(0,0,0,0.3);";
+												str+="<div	style='box-sizing: border-box;overflow:hidden;border:1px solid red;background:#fff;position:absolute;box-shadow:2px 2px 2px RGBA(0,0,0,0.3);";
 												str+="left:"+Math.round((coursepos*coursewidth*zoomfact)+(zoomfact*4))+"px;";
 												str+="top:"+Math.round((periodheight*k*zoomfact)+(zoomfact*4))+"px;";
 												str+="width:"+Math.round((coursew*zoomfact)-(zoomfact*10))+"px;";
@@ -214,40 +248,6 @@ function updatepos()
 				coursebox.style.left=Math.round((course.x*zoomfact)+(scrollx*(1.0/zoomfact)))+"px";
 				coursebox.style.top=Math.round((course.y*zoomfact)+(scrolly*(1.0/zoomfact)))+"px";
 		}
-}
-
-function zoomin()
-{
-		var oldzoomfact=zoomfact;
-	
-		if(zoomfact==0.125) zoomfact=0.25
-		else if(zoomfact==0.25) zoomfact=0.5
-		else if(zoomfact==0.5) zoomfact=0.75
-		else if(zoomfact==0.75) zoomfact=1.0
-		else if(zoomfact==1.0) zoomfact=1.25
-		else if(zoomfact==1.25) zoomfact=1.5
-		else if(zoomfact==1.5) zoomfact=2.0
-		else if(zoomfact==2.0) zoomfact=4.0;
-
-		// Update scroll position - center of screen should remain at new zoom factor
-	
-		showdata();
-}
-
-function zoomout()
-{
-		var oldzoomfact=zoomfact;
-	
-		if(zoomfact==0.25) zoomfact=0.125
-		else if(zoomfact==0.5) zoomfact=0.25
-		else if(zoomfact==0.75) zoomfact=0.5
-		else if(zoomfact==1.0) zoomfact=0.75
-		else if(zoomfact==1.25) zoomfact=1.0
-		else if(zoomfact==1.5) zoomfact=1.25
-		else if(zoomfact==2.0) zoomfact=1.5
-		else if(zoomfact==4.0) zoomfact=2.0;
-		
-		showdata();
 }
 
 function getData() {

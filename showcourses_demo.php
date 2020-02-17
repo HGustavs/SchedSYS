@@ -50,7 +50,7 @@
             display: inline-block;
             vertical-align: top;
 						transform-origin: top left;            
-						transform: translate(100px,0px) rotate(-90deg);					
+						transform: translate(20px,0px) rotate(90deg);					
         }
 
         #options-pane-content {
@@ -110,7 +110,7 @@
     <div id="fab" onclick="fab_action();">+</div>
 
     <div id="options-pane" class="hide-options-pane">
-        <div id="options-pane-button" onclick="fab_action();"><span><</span>Options</div>
+        <div id="options-pane-button" onclick="fab_action();"><span>&#9660;Options</span></div>
         <div id="options-pane-content">
             <div>
                 <fieldset>
