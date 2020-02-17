@@ -171,16 +171,16 @@ function showdata() {
 				str+="left:0px;";
 				str+="top:0px;";			
 				str+="' >";
-				str+="<div style='box-sizing: border-box;border-bottom:1px dashed brown;text-align:center;top:0px;font-family:arial narrow;font-weight:bold;font-size:"+Math.round(zoomfact*textheight)+"px' >"+program.prognamn+"</div>";
+				str+="<div class='programtext' style='font-size:"+Math.round(zoomfact*textheight)+"px' >"+program.prognamn+"</div>";
 				
 				// Flex to get year reliably side by side
 				str+="<div class='flexyear'>";
 				for(var j=0;j<program.years;j++){
-						str+="<div style='";
-						str+="height:"+Math.round((zoomfact*courseheight)-(zoomfact*textheight))+"px;width:"+Math.round(zoomfact*coursewidth)+"px;font-family:arial narrow;font-weight:bold;font-size:"+Math.round(zoomfact*textheight)+"px;";
+						str+="<div class='year' style='";
+						str+="height:"+Math.round((zoomfact*courseheight)-(zoomfact*textheight))+"px;width:"+Math.round(zoomfact*coursewidth)+"px;font-size:"+Math.round(zoomfact*textheight)+"px;";
 						if(j>0) str+="border-left:1px dashed brown;";
 						str+="' >";
-						str+="<div style='text-align:center;text-decoration:none;font-weight:normal;'>År "+(j+1)+"</div>";
+						str+="<div class='yeartext' style=''>År "+(j+1)+"</div>";
 
 						str+="<div class='coursecontainer' style='position:relative;width:"+Math.round(coursewidth*zoomfact)+"px;height:"+Math.round(zoomfact*periodheight*4)+"px;'>"
 						// Height is 400 ... 100 per study period ... minus Program Name and Year ...
@@ -201,7 +201,7 @@ function showdata() {
 												var course=period[l];
 												var coursew=(course.spd*coursewidth);
 												var courseh=(course.hp/15/course.spd);
-												str+="<div	style='box-sizing: border-box;overflow:hidden;border:1px solid red;background:#fff;position:absolute;box-shadow:2px 2px 2px RGBA(0,0,0,0.3);";
+												str+="<div	class='course' style='";
 												str+="left:"+Math.round((coursepos*coursewidth*zoomfact)+(zoomfact*4))+"px;";
 												str+="top:"+Math.round((periodheight*k*zoomfact)+(zoomfact*4))+"px;";
 												str+="width:"+Math.round((coursew*zoomfact)-(zoomfact*10))+"px;";

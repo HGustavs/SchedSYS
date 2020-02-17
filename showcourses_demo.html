@@ -91,10 +91,39 @@
 					position:absolute;
 			}
 			
+			.programtext {
+					box-sizing: border-box;
+					border-bottom:1px dashed brown;
+					text-align:center;
+					top:0px;
+					font-family:arial narrow;
+					font-weight:bold;			
+			}
+			
+			.year {
+					font-family:arial narrow;
+					font-weight:bold;			
+			}
+			
+			.yeartext {
+					text-align:center;
+					text-decoration:none;
+					font-weight:normal;			
+			}
+			
 			.flexyear {
 					display: flex;
 					flex-direction: row;
 					width:100%;
+			}			
+			
+			.course {
+					box-sizing: border-box;
+					overflow:hidden;
+					border:1px solid red;
+					background:#fff;
+					position:absolute;
+					box-shadow:2px 2px 2px RGBA(0,0,0,0.3);			
 			}
 			
     </style>
@@ -117,21 +146,6 @@
                     <legend>Zoom</legend>
                     <input type="button" value="Zoom in" onclick='zoomin();' />
                     <input type="button" value="Zoom out" onclick='zoomout();' />									
-                </fieldset>
-
-							<fieldset>
-                    <legend>Calendar Options</legend>
-                    <div><input id="box1" type="checkbox"><label for="box1">Highligt updates</label></div>
-                    <div><input id="box2" type="checkbox"><label for="box2">Use pastel colors</label></div>
-                    <div><input id="box3" type="checkbox"><label for="box3">Hide seminars</label></div>
-                    <div><input id="box4" type="checkbox"><label for="box4">Hide lectures</label></div>
-                    <div><input id="box5" type="checkbox"><label for="box5">Hide labs</label></div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Sync Options</legend>
-                    <div><input id="box6" onchange="showdata()" type="checkbox"><label for="box6">Ignore iCal calendars</label></div>
-                    <div><input id="box7" type="checkbox"><label for="box7">Use optimistic sync</label></div>
                 </fieldset>
             </div>
         </div>
