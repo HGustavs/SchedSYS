@@ -11,14 +11,14 @@ var cwidth,cheight;
 var data=[
 	{prognamn:"WEBUG",x:0,y:0,years:3,year:[
 			{			// Year 1
-						"4":[{"name":"Datorgrafik","hp":"7.5","spd":0.5},{"name":"Webbplatsdesign",hp:"7.5","spd":0.5}],
-						"5":[{"name":"Grundläggande programmering med C++","hp":"7.5","spd":0.5},{"name":"User Experience Design",hp:"7.5","spd":0.5}],
-						"1":[],
-						"2":[]		
+						"4":[{"name":"Datorgrafik","hp":"7.5","spd":0.5, "req":[],"code":"IT118G"},{"name":"Webbplatsdesign",hp:"7.5","spd":0.5, "req":[],"code":"IT108G"}],
+						"5":[{"name":"Grundläggande programmering med C++","hp":"7.5","spd":0.5, "req":[],"code":"IT120G"},{"name":"User Experience Design",hp:"7.5","spd":0.5, "req":[],"code":"IT111G"}],
+						"1":[{"name":"Databassystem","hp":"7.5","spd":0.5, "req":[],"code":"IT121G"},{"name":"Webbutveckling - mobilapplikationsdesign",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT108G","credits":7.5}]],"code":"IT111G"}],
+						"2":[{"name":"Webbutveckling - Programmering av mobila applikationer","hp":"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT351G"},{"name":"Webbutveckling - XML API",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5}],[{"type":"course","code":"IT121G","credits":7.5}]],"code":"IT111G"}]		
 			},
 			{			// Year 2
-						"4":[],
-						"5":[],
+						"4":[{"name":"IT i organisationer - introduktion","hp":"7.5","spd":0.5, "req":[],"code":"IT110G"},{"name":"Databaskonstruktion",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT121G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT108G"}],
+						"5":[{"name":"Datakommunikation - Introduktion","hp":"7.5","spd":0.5, "req":[],"code":"IT119G"},{"name":"Webbprogrammering",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT331G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT108G","credits":7.5}]],"code":"IT311G"}],
 						"1":[],
 						"2":[{"name":"Projekt",hp:"15",spd:1.0}]		
 			},
@@ -201,7 +201,7 @@ function showdata() {
 												var course=period[l];
 												var coursew=(course.spd*coursewidth);
 												var courseh=(course.hp/15/course.spd);
-												str+="<div	class='course' style='";
+												str+="<div onclick='logReq("+JSON.stringify(course.req)+");'	class='course' style='";
 												str+="left:"+Math.round((coursepos*coursewidth*zoomfact)+(zoomfact*4))+"px;";
 												str+="top:"+Math.round((periodheight*k*zoomfact)+(zoomfact*4))+"px;";
 												str+="width:"+Math.round((coursew*zoomfact)-(zoomfact*10))+"px;";
@@ -248,6 +248,32 @@ function updatepos()
 				coursebox.style.left=Math.round((course.x*zoomfact)+(scrollx*(1.0/zoomfact)))+"px";
 				coursebox.style.top=Math.round((course.y*zoomfact)+(scrolly*(1.0/zoomfact)))+"px";
 		}
+}
+
+function logReq(req){
+    //console.log(req);    
+    let str = "Requires: ";    
+    str += logReqRow(req);
+    console.log(str);
+}
+
+function logReqRow(row){
+    let str = "";
+    for(let i=0;i<row.length;i++){
+        let r = row[i];
+        if(Array.isArray(r)){
+            if(i>0){
+                str += " AND ";
+            }
+            str += " ( " + logReqRow(r) + " ) ";
+        }else{                       
+            if (i>0){
+                str += " OR ";
+            } 
+            str += r.credits + " " + r.code;
+        }
+    }
+    return str; 
 }
 
 function getData() {
