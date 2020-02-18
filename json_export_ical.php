@@ -11,7 +11,8 @@
 //-------------------------------------------------------------------------------------------------------------
 
 date_default_timezone_set('Europe/Stockholm');
-$gcontent = file_get_contents("https://calendar.google.com/calendar/ical/c393c23i4fej7huhs9jdd0fnao%40group.calendar.google.com/private-48840e1db3184bd9f256a8c26f6bb9b6/basic.ics");
+include_once('config.php');
+$gcontent = file_get_contents(GOOGLE_ICAL);
 $contentzz = explode("\n", $gcontent);
 
 $dayarr = array();
@@ -46,6 +47,7 @@ for ($i = 0; $i < sizeof($contentzz); $i++) {
 						$elem[$key] = $value;
 				}
 		} else {
+                
 				if (strcmp($cont, "BEGIN:VEVENT") === 0) {
 						$isProcessingEvent = true;
 						$elem = array();

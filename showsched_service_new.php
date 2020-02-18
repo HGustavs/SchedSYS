@@ -9,7 +9,7 @@
 //        (. .)           
 //       c(")(")  ∴ 
 //-------------------------------------------------------------------------------------------------------------
-
+include_once('config.php');
 date_default_timezone_set('Europe/Stockholm');
 $debug="NONE!";
 	
@@ -143,4 +143,3 @@ $ret = array(
 
 header('Content-Type: application/json');
 echo json_encode($ret);
-?>

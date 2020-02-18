@@ -2,5 +2,6 @@
 // 2) Rename file to: config.php
 //
 <?php
+    define("SIGNATURE","Your TimeEdit Signature");
     define("GOOGLE_ICAL","add secret link to google ical");
 ?>
