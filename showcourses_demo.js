@@ -129,7 +129,7 @@ function zoomin()
 		else if(zoomfact==1.5) zoomfact=2.0
 		else if(zoomfact==2.0) zoomfact=4.0;
 
-		// Update scroll position - missing code for determining that center of screen should remain at new zoom factor
+		// Update scroll position - missing code for determining that center of screen should remain at nevw zoom factor
 		showdata();
 }
 
@@ -150,6 +150,8 @@ function zoomout()
 		showdata();
 }
 
+var ctx;
+
 // Generate all courses at appropriate zoom level
 function showdata() {
 		var container=document.getElementById("container");
@@ -158,6 +160,16 @@ function showdata() {
 		// Compute bounds of 
 		cwidth=containerbox.width;
 		cheight=containerbox.height;
+	
+		canvas=document.getElementById('canvasOverlay');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;	
+		ctx = canvas.getContext('2d');	
+		
+		ctx.beginPath();
+		ctx.moveTo(0,0);
+		ctx.lineTo(400,400);
+		ctx.stroke();
 	
 		var str="";
 		
@@ -251,6 +263,8 @@ function updatepos()
 }
 
 function getData() {
+	
+	
 		showdata();
 /*
     let op = "DEFAULT";
