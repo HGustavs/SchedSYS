@@ -18,15 +18,15 @@ var data=[
 						"2":[{"name":"Webbutveckling - Programmering av mobila applikationer","hp":"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT351G"},{"name":"Webbutveckling - XML API",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5}],[{"type":"course","code":"IT121G","credits":7.5}]],"code":"IT111G"}]		
 			},
 			{			// Year 2
-						"4":[{"name":"IT i organisationer - introduktion","hp":"7.5","spd":0.5, "req":[],"code":"IT110G"},{"name":"Databaskonstruktion",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT121G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT108G"}],
+						"4":[{"name":"IT i organisationer - introduktion","hp":"7.5","spd":0.5, "req":[],"code":"IT110G"},{"name":"Databaskonstruktion",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT121G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT315G"}],
 						"5":[{"name":"Datakommunikation - Introduktion","hp":"7.5","spd":0.5, "req":[],"code":"IT119G"},{"name":"Webbprogrammering",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT331G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT108G","credits":7.5}]],"code":"IT311G"}],
-						"1":[],
-						"2":[{"name":"Projekt",hp:"15",spd:1.0}]		
+						"1":[{"name":"Objektorienterad programmering","hp":"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT366G"},{"name":"Software Engineering",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT386G"}],
+						"2":[{"name":"Projekt i software engineering","hp":"15.0","spd":1, "req":[[{"type":"course","code":"IT386G","credits":7.5}],[{"type":"course","code":"IT311G","credits":7.5},{"type":"course","code":"IT366G","credits":7.5}]],"code":"IT350G"}]		
 			},
 			{			// Year 3
-						"4":[],
-						"5":[],
-						"1":[{"name":"Examensarbete",hp:"30",spd:1.0}],
+						"4":[{"name":"Operativsystem","hp":"7.5","spd":0.5, "req":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],"code":"IT391G"},{"name":"Webbutveckling - content management och drift",hp:"7.5","spd":0.5, "req":[[{"type":"course","code":"IT350G","credits":15}]],"code":"IT509G"}],
+						"5":[{"name":"Webbteknologi - forskning och utveckling","hp":"7.5","spd":0.5, "req":[[{"type":"course","code":"IT350G","credits":15}],[{"type":"course","code":"IT315G","credits":7.5}]],"code":"IT515G"},{"name":"Informationssäkerhet - Introduktion",hp:"7.5","spd":0.5, "req":[],"code":"IT139G"}],
+						"1":[{"name":"Examensarbete i informationsteknologi med inriktning mot webbprogrammering",hp:"30",spd:1.0,"req":[[{"type":"course","code":"IT515G","credits":7.5}],[{"type":"course","code":"IT509G","credits":7.5}]],"code":"IT391G"}],
 						"2":[]		
 			}
 	]},
