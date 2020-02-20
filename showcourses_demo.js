@@ -189,12 +189,7 @@ function showdata() {
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;	
 		ctx = canvas.getContext('2d');	
-		
-		ctx.beginPath();
-		ctx.moveTo(0,0);
-		ctx.lineTo(400,400);
-		ctx.stroke();
-	
+			
 		var str="";
 		
 		// Iterate over courses
@@ -318,6 +313,37 @@ function logReqe(event){
 		logReq(program,course);
 }
 
+// Arrow drawing
+function drawArrow(x1,y1,x2,y2)
+{
+		// Reflect vector and make unit length * 3
+		dx=-(y2-y1);
+		dy=x2-x1;
+		len=Math.sqrt((dx*dx)+(dy*dy));
+		adx=(dx/len)*3;
+		ady=(dy/len)*3;
+	
+		// Shorten vector to unit length * 8
+		dx=x2-x1;
+		dy=y2-y1;
+		len=Math.sqrt((dx*dx)+(dy*dy));
+		pdx=(dx/len)*8;
+		pdy=(dy/len)*8;
+	
+		ctx.beginPath();
+		ctx.moveTo(x1,y1);
+		ctx.lineTo(x2,y2);
+		ctx.stroke();	
+
+		ctx.beginPath();
+		ctx.moveTo(x2,y2);
+		ctx.lineTo(x2-pdx-adx,y2-pdy-ady);
+		ctx.lineTo(x2-pdx+adx,y2-pdy+ady);
+		ctx.lineTo(x2,y2);	
+		ctx.fill();	
+	
+}
+
 function logReqRow(row,program,course, color_idx=1){
     let str = "";
     for(let i=0;i<row.length;i++){
@@ -331,10 +357,15 @@ function logReqRow(row,program,course, color_idx=1){
 						toreq=document.getElementById(program+course);
 						fromreq=startpoint=document.getElementById(program+r.code);
 						// Highlight requirement course
-            if(fromreq!=null){
+            if(fromreq!=null&&toreq!=null){
+								fromreqbox=fromreq.getBoundingClientRect();
+								toreqbox=toreq.getBoundingClientRect();					
+							
                 fromreq.classList.add("selected-course");                 
                 fromreq.style.backgroundColor=colors[color_idx];
 							
+								drawArrow(fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2),fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2),toreqbox.left+((toreqbox.right-toreqbox.left)/2),toreqbox.top+((toreqbox.bottom-toreqbox.top)/2));
+													 
 								// If this course was found we recurse further
 								logReq(program,r.code);
             }
