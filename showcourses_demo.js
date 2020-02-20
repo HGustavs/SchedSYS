@@ -293,7 +293,7 @@ function logReq(program,course)
 		var courseforrk=forrk[course];
 	
 		let str = "Requires: ";    
-    str += logReqRow(courseforrk,program);
+    str += logReqRow(courseforrk,program,course);
     console.log(str);
 	
 /*	
@@ -318,7 +318,7 @@ function logReqe(event){
 		logReq(program,course);
 }
 
-function logReqRow(row,program, color_idx=1){
+function logReqRow(row,program,course, color_idx=1){
     let str = "";
     for(let i=0;i<row.length;i++){
         let r = row[i];
@@ -326,13 +326,14 @@ function logReqRow(row,program, color_idx=1){
             if(i>0){
                 str += " AND ";
             }
-            str += " ( " + logReqRow(r,program,color_idx++) + " ) ";
-        }else{      
-						// Highlight course
-						//alert(program+r.code);
-            if(document.getElementById(program+r.code)!=null){
-                document.getElementById(program+r.code).classList.add("selected-course");                 
-                document.getElementById(program+r.code).style.backgroundColor=colors[color_idx];
+            str += " ( " + logReqRow(r,program,course,color_idx++) + " ) ";
+        }else{
+						toreq=document.getElementById(program+course);
+						fromreq=startpoint=document.getElementById(program+r.code);
+						// Highlight requirement course
+            if(fromreq!=null){
+                fromreq.classList.add("selected-course");                 
+                fromreq.style.backgroundColor=colors[color_idx];
 							
 								// If this course was found we recurse further
 								logReq(program,r.code);
