@@ -15,7 +15,7 @@ var data=[
 						"4":[{"name":"Datorgrafik","hp":"7.5","spd":0.5,"code":"IT118G"},{"name":"Webbplatsdesign",hp:"7.5","spd":0.5,"code":"IT108G"}],
 						"5":[{"name":"Grundläggande programmering med C++","hp":"7.5","spd":0.5,"code":"IT120G"},{"name":"User Experience Design",hp:"7.5","spd":0.5, "code":"IT111G"}],
 						"1":[{"name":"Databassystem","hp":"7.5","spd":0.5, "code":"IT121G"},{"name":"Webbutveckling - mobilapplikationsdesign",hp:"7.5","spd":0.5,"code":"IT331G"}],
-						"2":[{"name":"Webbutveckling - Programmering av mobila applikationer","hp":"7.5","spd":0.5,"code":"IT351G"},{"name":"Webbutveckling - XML API",hp:"7.5","spd":0.5,"code":"IT111G"}]		
+						"2":[{"name":"Webbutveckling - Programmering av mobila applikationer","hp":"7.5","spd":0.5,"code":"IT351G"},{"name":"Webbutveckling - XML API",hp:"7.5","spd":0.5,"code":"IT385G"}]		
 			},
 			{			// Year 2
 						"4":[{"name":"IT i organisationer - introduktion","hp":"7.5","spd":0.5,"code":"IT110G"},{"name":"Databaskonstruktion",hp:"7.5","spd":0.5, "code":"IT315G"}],
@@ -78,10 +78,10 @@ var forrk={
 	"IT108G":[],
 	"IT120G":[],
 	"IT111G":[],
-  "IT121G":[],
+    "IT121G":[],
 	"IT331G":[[{"type":"course","code":"IT108G","credits":7.5}]],
 	"IT351G":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],
-	"IT111G":[[{"type":"course","code":"IT120G","credits":7.5}],[{"type":"course","code":"IT121G","credits":7.5}]],
+	"IT385G":[[{"type":"course","code":"IT120G","credits":7.5}],[{"type":"course","code":"IT121G","credits":7.5}]],
 	"IT110G":[],
 	"IT315G":[[{"type":"course","code":"IT121G","credits":7.5}],[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],
 	"IT119G":[],
