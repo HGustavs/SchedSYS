@@ -291,7 +291,11 @@ function updatepos()
 function logReq(program,course)
 {
 		var courseforrk=forrk[course];
-
+	
+		let str = "Requires: ";    
+    str += logReqRow(courseforrk);
+    console.log(str);
+	
 /*	
     //console.log(req);    
     let elements = Array.from(document.getElementsByClassName("selected-course"));
@@ -302,9 +306,7 @@ function logReq(program,course)
     }
 
     selected_el.classList.add("selected-course");
-    let str = "Requires: ";    
-    str += logReqRow(req);
-    console.log(str);
+    
 */	
 }
 
