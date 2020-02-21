@@ -278,26 +278,7 @@ function logReqRow(row,program,course, mode, color_idx=1){
 }
 
 function getData() {
-	
-	
 		showdata();
-/*
-    let op = "DEFAULT";
-    let params = { "start_week": -2, "end_week": 2};
-    var jqxhr = $.ajax({
-        type: 'POST',
-        url: 'showsched_service_new.php',
-        dataType: 'json',
-        data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
-    })
-		.done(data_returned)
-		.fail(function (e) {
-				alert(e.responseText);
-		})
-		.always(function () {
-				//alert( "complete" );
-		});
-*/
 }
 
 function data_returned(ret) {
