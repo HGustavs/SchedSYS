@@ -283,34 +283,14 @@ function updatepos()
 
 // Can now be made recursive ... id must contain both id of program and course since same course may appear in more than one program
 
-function logReq(program,course)
-{
-		var courseforrk=forrk[course];
-	
-		let str = "Requires: ";    
-    str += logReqRow(courseforrk,program,course);
-    console.log(str);
-	
-/*	
-    //console.log(req);    
-    let elements = Array.from(document.getElementsByClassName("selected-course"));
-    for(let i=0;i<elements.length;i++){
-        let el=elements[i];
-        el.classList.remove("selected-course");
-        el.style.backgroundColor=colors[0]; 
-    }
-
-    selected_el.classList.add("selected-course");
-    
-*/	
-}
-
 function logReqe(event){
-	
 		var program=event.target.id.substr(0,5);
 		var course=event.target.id.substr(5);
+		var courseforrk=forrk[course];
+		var str = "Star: ";    
+    str += logReqRow(courseforrk,program,course,"and");	
 	
-		logReq(program,course);
+		console.log(str);
 }
 
 // Arrow drawing
@@ -341,18 +321,19 @@ function drawArrow(x1,y1,x2,y2)
 		ctx.lineTo(x2-pdx+adx,y2-pdy+ady);
 		ctx.lineTo(x2,y2);	
 		ctx.fill();	
-	
 }
 
-function logReqRow(row,program,course, color_idx=1){
+function logReqRow(row,program,course, mode, color_idx=1){
     let str = "";
     for(let i=0;i<row.length;i++){
         let r = row[i];
+				if(i>0){
+						str+=" "+mode+" ";
+				}
         if(Array.isArray(r)){
-            if(i>0){
-                str += " AND ";
-            }
-            str += " ( " + logReqRow(r,program,course,color_idx++) + " ) ";
+            str += " ( ";
+						str +=logReqRow(r,program,course,"or",color_idx++);
+						str += " ) ";
         }else{
 						toreq=document.getElementById(program+course);
 						fromreq=startpoint=document.getElementById(program+r.code);
@@ -367,11 +348,8 @@ function logReqRow(row,program,course, color_idx=1){
 								drawArrow(fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2),fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2),toreqbox.left+((toreqbox.right-toreqbox.left)/2),toreqbox.top+((toreqbox.bottom-toreqbox.top)/2));
 													 
 								// If this course was found we recurse further
-								logReq(program,r.code);
+								logReqRow(forrk[r.code],program,r.code,"and");
             }
-            if (i>0){
-                str += " OR ";
-            } 
             str += r.credits + " " + r.code;
         }
     }
