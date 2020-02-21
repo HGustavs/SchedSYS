@@ -292,12 +292,17 @@ function logReqRow(row,program,course, mode, color_idx=1){
 						// Highlight requirement course
             if(fromreq!=null&&toreq!=null){
 								fromreqbox=fromreq.getBoundingClientRect();
-								toreqbox=toreq.getBoundingClientRect();					
+								toreqbox=toreq.getBoundingClientRect();
+							
+								fromreqbox.cx=fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2);
+								fromreqbox.cy=fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2);
+								toreqbox.cx=toreqbox.left+((toreqbox.right-toreqbox.left)/2);
+								toreqbox.cy=toreqbox.top+((toreqbox.bottom-toreqbox.top)/2);
 							
                 fromreq.classList.add("selected-course");                 
                 fromreq.style.backgroundColor=colors[color_idx];
 							
-								drawArrow(fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2),fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2),toreqbox.left+((toreqbox.right-toreqbox.left)/2),toreqbox.top+((toreqbox.bottom-toreqbox.top)/2));
+								drawArrow(fromreqbox.cx,fromreqbox.cy,toreqbox.cx,toreqbox.cy);
 													 
 								// If this course was found we recurse further
 								logReqRow(forrk[r.code],program,r.code,"and");
