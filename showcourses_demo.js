@@ -2,11 +2,27 @@ var service =[];
 var auto_update=null;
 var uidArr=[];
 
+//------------------------------------=======############==========----------------------------------------
+//                           Defaults, mouse variables and zoom variables
+//------------------------------------=======############==========----------------------------------------
+
 var mb,startX,startY;
 var startTop,startLeft;
 var sscrollx,sscrolly;
 var cwidth,cheight;
 var colors = ["white","Gold","pink","yellow","CornflowerBlue"];
+
+var zoomfact=1.0;
+var scrollx=100;
+var scrolly=100;
+var courseheight=440;
+var textheight=16;
+var coursewidth=200;
+var periodheight=100;
+
+//------------------------------------=======############==========----------------------------------------
+//                                           Mouse events
+//------------------------------------=======############==========----------------------------------------
 
 function mdown(event)
 {
@@ -52,6 +68,14 @@ function fab_action()
     }    
 }
 
+//------------------------------------=======############==========----------------------------------------
+//                                           Zoom handling
+//------------------------------------=======############==========----------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+// zoomin/out - functions for updating the zoom factor and scroll positions
+//-------------------------------------------------------------------------------------------------
+
 function zoomin()
 {
 		scrollx=scrollx/zoomfact;
@@ -95,6 +119,10 @@ function zoomout()
 }
 
 var ctx;
+
+//-------------------------------------------------------------------------------------------------
+// Showdata iterates over all programs/years/periods/courses
+//-------------------------------------------------------------------------------------------------
 
 // Generate all courses at appropriate zoom level
 function showdata() {
@@ -183,15 +211,10 @@ function showdata() {
 	
 }
 
-var zoomfact=1.0;
-var scrollx=100;
-var scrolly=100;
-var courseheight=440;
-var textheight=16;
-var coursewidth=200;
-var periodheight=100;
+//-------------------------------------------------------------------------------------------------
+// zoomin/out - Update positions of all elements based on the zoom level and view space coordinate
+//-------------------------------------------------------------------------------------------------
 
-// Update positions of all elements based on the zoom level and view space coordinate
 function updatepos()
 {
 		for(var i=0;i<data.length;i++){
@@ -203,7 +226,9 @@ function updatepos()
 		}
 }
 
-// Can now be made recursive ... id must contain both id of program and course since same course may appear in more than one program
+//-------------------------------------------------------------------------------------------------
+// logReq - Click event for course, find course parameters from element id, and recurse into requirements 
+//-------------------------------------------------------------------------------------------------
 
 function logReqe(event){
 		var program=event.target.id.substr(0,5);
@@ -215,7 +240,46 @@ function logReqe(event){
 		console.log(str);
 }
 
-// Arrow drawing
+//-------------------------------------------------------------------------------------------------
+// logReqRow - Recursive function for course requirements 
+//-------------------------------------------------------------------------------------------------
+
+function logReqRow(row,program,course, mode, color_idx=1){
+    let str = "";
+    for(let i=0;i<row.length;i++){
+        let r = row[i];
+				if(i>0){
+						str+=" "+mode+" ";
+				}
+        if(Array.isArray(r)){
+						// For now we assume all second level arrays are "or" - this may need to be revised to support more "exotic" configs
+						str +=" ( "+logReqRow(r,program,course,"or",color_idx++)+" ) ";
+        }else{
+						toreq=document.getElementById(program+course);
+						fromreq=startpoint=document.getElementById(program+r.code);
+						// Highlight requirement course
+            if(fromreq!=null&&toreq!=null){
+								fromreqbox=fromreq.getBoundingClientRect();
+								toreqbox=toreq.getBoundingClientRect();					
+							
+                fromreq.classList.add("selected-course");                 
+                fromreq.style.backgroundColor=colors[color_idx];
+							
+								drawArrow(fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2),fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2),toreqbox.left+((toreqbox.right-toreqbox.left)/2),toreqbox.top+((toreqbox.bottom-toreqbox.top)/2));
+													 
+								// If this course was found we recurse further
+								logReqRow(forrk[r.code],program,r.code,"and");
+            }
+            str += r.credits + " " + r.code;
+        }
+    }
+    return str; 
+}
+
+//-------------------------------------------------------------------------------------------------
+// drawArrow - Canvas code for drawing a filled arrow
+//-------------------------------------------------------------------------------------------------
+
 function drawArrow(x1,y1,x2,y2)
 {
 		// Reflect vector and make unit length * 3
@@ -245,37 +309,9 @@ function drawArrow(x1,y1,x2,y2)
 		ctx.fill();	
 }
 
-function logReqRow(row,program,course, mode, color_idx=1){
-    let str = "";
-    for(let i=0;i<row.length;i++){
-        let r = row[i];
-				if(i>0){
-						str+=" "+mode+" ";
-				}
-        if(Array.isArray(r)){
-						// For now we assume all second level arrays are "or"
-						str +=" ( "+logReqRow(r,program,course,"or",color_idx++)+" ) ";
-        }else{
-						toreq=document.getElementById(program+course);
-						fromreq=startpoint=document.getElementById(program+r.code);
-						// Highlight requirement course
-            if(fromreq!=null&&toreq!=null){
-								fromreqbox=fromreq.getBoundingClientRect();
-								toreqbox=toreq.getBoundingClientRect();					
-							
-                fromreq.classList.add("selected-course");                 
-                fromreq.style.backgroundColor=colors[color_idx];
-							
-								drawArrow(fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2),fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2),toreqbox.left+((toreqbox.right-toreqbox.left)/2),toreqbox.top+((toreqbox.bottom-toreqbox.top)/2));
-													 
-								// If this course was found we recurse further
-								logReqRow(forrk[r.code],program,r.code,"and");
-            }
-            str += r.credits + " " + r.code;
-        }
-    }
-    return str; 
-}
+//------------------------------------=======############==========----------------------------------------
+//                                    Default data display stuff
+//------------------------------------=======############==========----------------------------------------
 
 function getData() {
 		showdata();
