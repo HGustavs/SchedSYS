@@ -12,13 +12,19 @@ var sscrollx,sscrolly;
 var cwidth,cheight;
 var colors = ["white","Gold","pink","yellow","CornflowerBlue"];
 
+// Zoom variables
 var zoomfact=1.0;
 var scrollx=100;
 var scrolly=100;
+
+// Course constants
 var courseheight=440;
 var textheight=16;
 var coursewidth=200;
 var periodheight=100;
+
+// Arrow drawing stuff
+var arrows=[];
 
 //------------------------------------=======############==========----------------------------------------
 //                                           Mouse events
@@ -140,7 +146,7 @@ function showdata() {
 			
 		var str="";
 		
-		// Iterate over courses
+		// Iterate over programs
 		for(var i=0;i<data.length;i++){
 				var program=data[i];
 				
@@ -231,13 +237,39 @@ function updatepos()
 //-------------------------------------------------------------------------------------------------
 
 function logReqe(event){
-		var program=event.target.id.substr(0,5);
-		var course=event.target.id.substr(5);
-		var courseforrk=forrk[course];
-		var str = "Star: ";    
-    str += logReqRow(courseforrk,program,course,"and");	
-	
-		console.log(str);
+		var rprogram=event.target.id.substr(0,5);
+		var rcourse=event.target.id.substr(5);
+		var courseforrk=forrk[rcourse];
+
+		// Clear all top/left/bottom/right arrays for all courses in affected program
+		for(var i=0;i<data.length;i++){
+				var program=data[i];
+				for(var j=0;j<program.years;j++){
+					var periods=program.year[j];
+						for(var k=0;k<4;k++){
+								var period=0;
+								if(k==0) period=periods["4"];
+								if(k==1) period=periods["5"];
+								if(k==2) period=periods["1"];							
+								if(k==3) period=periods["2"];
+								if(typeof period!="undefined"){
+										for(var l=0;l<period.length;l++){
+												var course=period[l];
+												course.left=[];
+												course.right=[];
+												course.top=[];
+												course.bottom=[];
+										}
+								}
+						}
+				}
+		}
+
+		// Clear all arrows
+		arrows=[];
+		
+    str = logReqRow(courseforrk,rprogram,rcourse,"and");	
+		console.log(str+" "+rcourse);
 }
 
 //-------------------------------------------------------------------------------------------------
