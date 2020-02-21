@@ -54,7 +54,8 @@ function fab_action()
 
 function zoomin()
 {
-		var oldzoomfact=zoomfact;
+		scrollx=scrollx/zoomfact;
+		scrolly=scrolly/zoomfact;
 	
 		if(zoomfact==0.125) zoomfact=0.25
 		else if(zoomfact==0.25) zoomfact=0.5
@@ -65,13 +66,17 @@ function zoomin()
 		else if(zoomfact==1.5) zoomfact=2.0
 		else if(zoomfact==2.0) zoomfact=4.0;
 
+		scrollx=scrollx*zoomfact;
+		scrolly=scrolly*zoomfact;
+	
 		// Update scroll position - missing code for determining that center of screen should remain at nevw zoom factor
 		showdata();
 }
 
 function zoomout()
 {
-		var oldzoomfact=zoomfact;
+		scrollx=scrollx/zoomfact;
+		scrolly=scrolly/zoomfact;
 	
 		if(zoomfact==0.25) zoomfact=0.125
 		else if(zoomfact==0.5) zoomfact=0.25
@@ -81,6 +86,9 @@ function zoomout()
 		else if(zoomfact==1.5) zoomfact=1.25
 		else if(zoomfact==2.0) zoomfact=1.5
 		else if(zoomfact==4.0) zoomfact=2.0;
+
+		scrollx=scrollx*zoomfact;
+		scrolly=scrolly*zoomfact;
 
 		// Update scroll position - missing code for determining that center of screen should remain at new zoom factor
 		showdata();
@@ -149,6 +157,8 @@ function showdata() {
 												str+="top:"+Math.round((periodheight*k*zoomfact)+(zoomfact*4))+"px;";
 												str+="width:"+Math.round((coursew*zoomfact)-(zoomfact*10))+"px;";
 												str+="height:"+Math.round((courseh*periodheight*zoomfact)-(zoomfact*8))+"px;";
+												str+="font-size:"+Math.round(zoomfact*textheight)+"px;"; 
+											
 												str+="'>";
 												str+=course.name;
 												str+="<br>";
