@@ -313,7 +313,8 @@ function logReqe(event){
 				}
 
 				if(arrow.to.side=="bottom"){
-						var x2=arrow.to.box.cx;
+						arrow.to.arr.sort(function(a, b){console.log(a,b);if(a.dy==b.dy){return a.dx-b.dx}else{return a.dy-b.dy}});
+						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 						var y2=arrow.to.box.bottom;
 				}
 				if(arrow.to.side=="left"){
@@ -354,24 +355,8 @@ function logReqRow(row,program,course, mode, color_idx=1){
             if(fromreq!=null&&toreq!=null){
 								frbox=fromreq.getBoundingClientRect();
 								tobox=toreq.getBoundingClientRect();
-							
-								// Compute bounding box parameters
-								frbox.w=(frbox.right-frbox.left);
-								frbox.h=(frbox.bottom-frbox.top);
-								frbox.cx=frbox.left+(frbox.w/2);
-								frbox.cy=frbox.top+(frbox.h/2);
-								tobox.w=(tobox.right-tobox.left);
-								tobox.h=(tobox.bottom-tobox.top);
-								tobox.cx=tobox.left+(tobox.w/2);
-								tobox.cy=tobox.top+(tobox.h/2);
-							
-								dx=frbox.cx-tobox.cx;
-								dy=frbox.cy-tobox.cy;
-	
-								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet
-								// if(a.left > b.left) dx=a.left-b.roght;
-								// if(a.left < b.left) dx=b.left-a.right;							
-								// If no overlap in X / Y
+
+								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet - If no overlap in X / Y
 								if((frbox.left>tobox.right)||(frbox.right<tobox.left)){
 										if(frbox.left>tobox.right){
 												dx=tobox.right-frbox.left;
