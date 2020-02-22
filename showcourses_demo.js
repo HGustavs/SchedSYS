@@ -236,6 +236,18 @@ function updatepos()
 }
 
 //-------------------------------------------------------------------------------------------------
+// findIndex - Returns index of object with certain ID
+//-------------------------------------------------------------------------------------------------
+
+function findIndex(arr,id)
+{
+		for(var i=0;i<arr.length;i++){
+				if(arr[i].id==id) return (i+1);
+		}
+		return -1;
+}
+
+//-------------------------------------------------------------------------------------------------
 // logReq - Click event for course, find course parameters from element id, and recurse into requirements 
 //-------------------------------------------------------------------------------------------------
 
@@ -295,7 +307,8 @@ function logReqe(event){
 						var y1=arrow.from.box.cy;
 				}			
 				if(arrow.to.side=="top"){
-						var x2=arrow.to.box.cx;
+						arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return a.dy-b.dy}});
+						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 						var y2=arrow.to.box.top;
 				}
 
@@ -313,7 +326,7 @@ function logReqe(event){
 						var y2=arrow.to.box.cy;
 				}			
 				drawArrow(x1,y1,x2,y2);
-				console.log(i,arrow);
+				// console.log(i,arrow);
 		}
 	
 		console.log(str+" "+rcourse);
@@ -325,7 +338,7 @@ function logReqe(event){
 
 function logReqRow(row,program,course, mode, color_idx=1){
     let str = "";
-		console.log("call: ",row,program,course,mode);
+//		console.log("call: ",row,program,course,mode);
     for(let i=0;i<row.length;i++){
         let r = row[i];
 				if(i>0){
@@ -354,7 +367,10 @@ function logReqRow(row,program,course, mode, color_idx=1){
 							
 								dx=frbox.cx-tobox.cx;
 								dy=frbox.cy-tobox.cy;
-							
+	
+								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet
+								// if(a.left > b.left) dx=a.left-b.roght;
+								// if(a.left < b.left) dx=b.left-a.right;							
 								// If no overlap in X / Y
 								if((frbox.left>tobox.right)||(frbox.right<tobox.left)){
 										if(frbox.left>tobox.right){
@@ -374,11 +390,8 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								}else{
 										dy=0;		
 								}							
-								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet
-								// if(a.left > b.left) dx=a.left-b.roght;
-								// if(a.left < b.left) dx=b.left-a.right;
-							  // else dx=0;
-							
+
+								// This id lets us search for connectors
 								var currid=makeRandomID();
 							
 								fromobj={id:currid,dir:"from",dx:dx,dy:dy,box:frbox};
@@ -415,24 +428,27 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								}
 							
 								// Add to objects!
-								if(fromobj.side=="right")  courses[program+r.code].right.push(fromobj);
-								if(fromobj.side=="left")   courses[program+r.code].left.push(fromobj);
-								if(fromobj.side=="top")    courses[program+r.code].top.push(fromobj);
-								if(fromobj.side=="bottom") courses[program+r.code].bottom.push(fromobj);
-								if(toobj.side=="right")    courses[program+course].right.push(toobj);
-								if(toobj.side=="left")     courses[program+course].left.push(toobj);
-								if(toobj.side=="top")      courses[program+course].top.push(toobj);
-								if(toobj.side=="bottom")   courses[program+course].bottom.push(toobj);								
+								if(fromobj.side=="right")  fromobj.arr=courses[program+r.code].right;
+								if(fromobj.side=="left")   fromobj.arr=courses[program+r.code].left;
+								if(fromobj.side=="top")    fromobj.arr=courses[program+r.code].top;
+								if(fromobj.side=="bottom") fromobj.arr=courses[program+r.code].bottom;
+								if(toobj.side=="right")    toobj.arr=courses[program+course].right;
+								if(toobj.side=="left")     toobj.arr=courses[program+course].left;
+								if(toobj.side=="top")      toobj.arr=courses[program+course].top;
+								if(toobj.side=="bottom")   toobj.arr=courses[program+course].bottom;
 							
+								// Push data to use for sorting connection points to each end of arrow
+								fromobj.arr.push({dx:dx,dy:dy,id:currid});
+								toobj.arr.push({dx:dx,dy:dy,id:currid});
+							
+								// Store current arrow
 								arrows.push({id:currid,from:fromobj,to:toobj});
 							
+								// Update styling
                 fromreq.classList.add("selected-course");                 
                 fromreq.style.backgroundColor=colors[color_idx];
 							
-								// drawArrow(fromreqbox.cx,fromreqbox.cy,toreqbox.cx,toreqbox.cy);
-													 
 								// If this course was found we recurse further
-								//console.log(course);
 								logReqRow(forrk[r.code],program,r.code,"and");
             }
             str += r.credits + " " + r.code;
