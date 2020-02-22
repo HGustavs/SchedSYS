@@ -325,6 +325,7 @@ function logReqe(event){
 
 function logReqRow(row,program,course, mode, color_idx=1){
     let str = "";
+		console.log("call: ",row,program,course,mode);
     for(let i=0;i<row.length;i++){
         let r = row[i];
 				if(i>0){
@@ -431,7 +432,8 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								// drawArrow(fromreqbox.cx,fromreqbox.cy,toreqbox.cx,toreqbox.cy);
 													 
 								// If this course was found we recurse further
-								logReqRow(program,course,courses);
+								//console.log(course);
+								logReqRow(forrk[r.code],program,r.code,"and");
             }
             str += r.credits + " " + r.code;
         }
