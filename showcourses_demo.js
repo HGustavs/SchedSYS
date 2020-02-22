@@ -337,22 +337,41 @@ function logReqRow(row,program,course, mode, color_idx=1){
 						fromreq=startpoint=document.getElementById(program+r.code);
 						// Highlight requirement course
             if(fromreq!=null&&toreq!=null){
-								fromreqbox=fromreq.getBoundingClientRect();
-								toreqbox=toreq.getBoundingClientRect();
+								frbox=fromreq.getBoundingClientRect();
+								tobox=toreq.getBoundingClientRect();
 							
 								// Compute bounding box parameters
-								fromreqbox.w=(fromreqbox.right-fromreqbox.left);
-								fromreqbox.h=(fromreqbox.bottom-fromreqbox.top);
-								fromreqbox.cx=fromreqbox.left+(fromreqbox.w/2);
-								fromreqbox.cy=fromreqbox.top+(fromreqbox.h/2);
-								toreqbox.w=(toreqbox.right-toreqbox.left);
-								toreqbox.h=(toreqbox.bottom-toreqbox.top);
-								toreqbox.cx=toreqbox.left+(toreqbox.w/2);
-								toreqbox.cy=toreqbox.top+(toreqbox.h/2);
+								frbox.w=(frbox.right-frbox.left);
+								frbox.h=(frbox.bottom-frbox.top);
+								frbox.cx=frbox.left+(frbox.w/2);
+								frbox.cy=frbox.top+(frbox.h/2);
+								tobox.w=(tobox.right-tobox.left);
+								tobox.h=(tobox.bottom-tobox.top);
+								tobox.cx=tobox.left+(tobox.w/2);
+								tobox.cy=tobox.top+(tobox.h/2);
 							
-								dx=fromreqbox.cx-toreqbox.cx;
-								dy=fromreqbox.cy-toreqbox.cy;
+								dx=frbox.cx-tobox.cx;
+								dy=frbox.cy-tobox.cy;
 							
+								// If no overlap in X / Y
+								if((frbox.left>tobox.right)||(frbox.right<tobox.left)){
+										if(frbox.left>tobox.right){
+												dx=tobox.right-frbox.left;
+										}else{
+												dx=tobox.left-frbox.right;
+										}
+								}else{
+										dx=0;		
+								}
+								if((frbox.top>tobox.bottom)||(frbox.bottom<tobox.top)){
+										if(frbox.top>tobox.bottom){
+												dy=tobox.bottom-frbox.top;
+										}else{
+												dy=tobox.top-frbox.bottom;
+										}
+								}else{
+										dy=0;		
+								}							
 								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet
 								// if(a.left > b.left) dx=a.left-b.roght;
 								// if(a.left < b.left) dx=b.left-a.right;
@@ -360,35 +379,65 @@ function logReqRow(row,program,course, mode, color_idx=1){
 							
 								var currid=makeRandomID();
 							
-								fromobj={id:currid,dir:"from",dx:dx,dy:dy,box:fromreqbox};
-								toobj={id:currid,dir:"to",dx:dx,dy:dy,box:toreqbox};
+								fromobj={id:currid,dir:"from",dx:dx,dy:dy,box:frbox};
+								toobj={id:currid,dir:"to",dx:dx,dy:dy,box:tobox};
+
+								console.log(dx,dy);
 							
-								// Detect interconnection variant - 7 cases
+								// Detect interconnection variant - 4 cases, overlap x, overlap y, closex/closey, any other variation
 								if(dx==0){
-										if(dy>0){
+										if(dy<0){
 												fromobj.side="top";
 												toobj.side="bottom";
-												courses[program+course].bottom.push(fromobj);
-												courses[program+r.code].top.push(toobj);
 										}else{
 												fromobj.side="bottom";
 												toobj.side="top";
-												courses[program+course].top.push(fromobj);
-												courses[program+r.code].bottom.push(toobj);
 										}
+										console.log("overlap X",dx,dy);
 								}else if(dy==0){
-										if(dx>0){
+										console.log("overlap Y",dx,dy);
+										if(dx<0){
 												fromobj.side="left";
 												toobj.side="right";											
-												courses[program+course].right.push(fromobj);
-												courses[program+r.code].left.push(toobj);
 										}else{
 												fromobj.side="right";
 												toobj.side="left";												
-												courses[program+course].left.push(fromobj);
-												courses[program+r.code].right.push(toobj);
 										}
+								}else if(Math.abs(dx<15)||Math.abs(dy<15)){
+										console.log("Close X / Close Y",dx,dy);
+										if(dx<0){
+												fromobj.side="left";
+										}else{
+												fromobj.side="right";										
+										}
+										if(dy<0){
+												toobj.side="bottom";												
+										}else{
+												toobj.side="top";												
+										}
+								}else{
+										console.log("Neither close nor overlap",dx,dy);
+										if(dx<0){
+												fromobj.side="left";
+												toobj.side="right";											
+										}else{
+												fromobj.side="right";	
+												toobj.side="left";
+										}
+							
 								}
+							
+								// Add to objects!
+								if(fromobj.side=="right")  courses[program+r.code].right.push(fromobj);
+								if(fromobj.side=="left")   courses[program+r.code].left.push(fromobj);
+								if(fromobj.side=="top")    courses[program+r.code].top.push(fromobj);
+								if(fromobj.side=="bottom") courses[program+r.code].bottom.push(fromobj);
+								if(toobj.side=="right")    courses[program+course].right.push(toobj);
+								if(toobj.side=="left")     courses[program+course].left.push(toobj);
+								if(toobj.side=="top")      courses[program+course].top.push(toobj);
+								if(toobj.side=="bottom")   courses[program+course].bottom.push(toobj);								
+							
+
 							
 								arrows.push({id:currid,from:fromobj,to:toobj});
 							
