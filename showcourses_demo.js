@@ -275,6 +275,7 @@ function logReqe(event){
 		
     str = logReqRow(courseforrk,rprogram,rcourse,"and");	
 	
+		// Draw all arrows
 		for(var i=0;i<arrows.length;i++){
 				var arrow=arrows[i];
 				if(arrow.from.side=="top"){
@@ -382,9 +383,7 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								fromobj={id:currid,dir:"from",dx:dx,dy:dy,box:frbox};
 								toobj={id:currid,dir:"to",dx:dx,dy:dy,box:tobox};
 
-								console.log(dx,dy);
-							
-								// Detect interconnection variant - 4 cases, overlap x, overlap y, closex/closey, any other variation
+								// Detect interconnection variant - overlap or else
 								if(dx==0){
 										if(dy<0){
 												fromobj.side="top";
@@ -393,9 +392,7 @@ function logReqRow(row,program,course, mode, color_idx=1){
 												fromobj.side="bottom";
 												toobj.side="top";
 										}
-										console.log("overlap X",dx,dy);
 								}else if(dy==0){
-										console.log("overlap Y",dx,dy);
 										if(dx<0){
 												fromobj.side="left";
 												toobj.side="right";											
@@ -403,8 +400,7 @@ function logReqRow(row,program,course, mode, color_idx=1){
 												fromobj.side="right";
 												toobj.side="left";												
 										}
-								}else if(Math.abs(dx<15)||Math.abs(dy<15)){
-										console.log("Close X / Close Y",dx,dy);
+								}else{
 										if(dx<0){
 												fromobj.side="left";
 										}else{
@@ -415,16 +411,6 @@ function logReqRow(row,program,course, mode, color_idx=1){
 										}else{
 												toobj.side="top";												
 										}
-								}else{
-										console.log("Neither close nor overlap",dx,dy);
-										if(dx<0){
-												fromobj.side="left";
-												toobj.side="right";											
-										}else{
-												fromobj.side="right";	
-												toobj.side="left";
-										}
-							
 								}
 							
 								// Add to objects!
@@ -436,8 +422,6 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								if(toobj.side=="left")     courses[program+course].left.push(toobj);
 								if(toobj.side=="top")      courses[program+course].top.push(toobj);
 								if(toobj.side=="bottom")   courses[program+course].bottom.push(toobj);								
-							
-
 							
 								arrows.push({id:currid,from:fromobj,to:toobj});
 							
