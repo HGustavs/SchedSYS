@@ -307,7 +307,7 @@ function logReqe(event){
 						var y1=arrow.from.box.cy;
 				}			
 				if(arrow.to.side=="top"){
-						arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return a.dy-b.dy}});
+						arrow.to.arr.sort(function(a, b){console.log(a,b);if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
 						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 						var y2=arrow.to.box.top;
 				}
@@ -438,8 +438,8 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								if(toobj.side=="bottom")   toobj.arr=courses[program+course].bottom;
 							
 								// Push data to use for sorting connection points to each end of arrow
-								fromobj.arr.push({dx:dx,dy:dy,id:currid});
-								toobj.arr.push({dx:dx,dy:dy,id:currid});
+								fromobj.arr.push({dx:tobox.left,dy:tobox.top,id:currid});
+								toobj.arr.push({dx:frbox.left,dy:frbox.top,id:currid});
 							
 								// Store current arrow
 								arrows.push({id:currid,from:fromobj,to:toobj});
