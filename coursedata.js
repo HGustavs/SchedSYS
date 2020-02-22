@@ -68,7 +68,7 @@ var forrk={
 	"IT108G":[],
 	"IT120G":[],
 	"IT111G":[],
-    "IT121G":[],
+  "IT121G":[],
 	"IT331G":[[{"type":"course","code":"IT108G","credits":7.5}]],
 	"IT351G":[[{"type":"course","code":"IT120G","credits":7.5},{"type":"course","code":"IT141G","credits":7.5}]],
 	"IT385G":[[{"type":"course","code":"IT120G","credits":7.5}],[{"type":"course","code":"IT121G","credits":7.5}]],

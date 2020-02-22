@@ -25,6 +25,7 @@ var periodheight=100;
 
 // Arrow drawing stuff
 var arrows=[];
+var courses=[];
 
 //------------------------------------=======############==========----------------------------------------
 //                                           Mouse events
@@ -145,6 +146,7 @@ function showdata() {
 		ctx = canvas.getContext('2d');	
 			
 		var str="";
+		var courses=[];
 		
 		// Iterate over programs
 		for(var i=0;i<data.length;i++){
@@ -184,6 +186,7 @@ function showdata() {
 										var coursepos=0;
 										for(l=0;l<period.length;l++){
 												var course=period[l];
+												courses[program.prognamn+course.code]=course;
 												var coursew=(course.spd*coursewidth);
 												var courseh=(course.hp/15/course.spd);
 												str+="<div id="+program.prognamn+course.code+" onclick='logReqe(event);'	class='course' style='";
@@ -241,7 +244,7 @@ function logReqe(event){
 		var rcourse=event.target.id.substr(5);
 		var courseforrk=forrk[rcourse];
 
-		// Clear all top/left/bottom/right arrays for all courses in affected program
+		// Clear all top/left/bottom/right arrays for all courses in affected program and add to courses array
 		for(var i=0;i<data.length;i++){
 				var program=data[i];
 				for(var j=0;j<program.years;j++){
@@ -259,16 +262,59 @@ function logReqe(event){
 												course.right=[];
 												course.top=[];
 												course.bottom=[];
+												// Assign to courses array
+												courses[rprogram+course.code]=course;
 										}
 								}
 						}
 				}
 		}
-
+	
 		// Clear all arrows
 		arrows=[];
 		
     str = logReqRow(courseforrk,rprogram,rcourse,"and");	
+	
+		for(var i=0;i<arrows.length;i++){
+				var arrow=arrows[i];
+				if(arrow.from.side=="top"){
+						var x1=arrow.from.box.cx;
+						var y1=arrow.from.box.top;
+				}
+				if(arrow.from.side=="bottom"){
+						var x1=arrow.from.box.cx;
+						var y1=arrow.from.box.bottom;
+				}
+				if(arrow.from.side=="left"){
+						var x1=arrow.from.box.left;
+						var y1=arrow.from.box.cy;
+				}
+				if(arrow.from.side=="right"){
+						var x1=arrow.from.box.right;
+						var y1=arrow.from.box.cy;
+				}			
+				if(arrow.to.side=="top"){
+						var x2=arrow.to.box.cx;
+						var y2=arrow.to.box.top;
+				}
+
+				if(arrow.to.side=="bottom"){
+						var x2=arrow.to.box.cx;
+						var y2=arrow.to.box.bottom;
+				}
+				if(arrow.to.side=="left"){
+						var x2=arrow.to.box.left;
+						var y2=arrow.to.box.cy;
+				}
+
+				if(arrow.to.side=="right"){
+						var x2=arrow.to.box.right;
+						var y2=arrow.to.box.cy;
+				}			
+				drawArrow(x1,y1,x2,y2);
+				console.log(i,arrow);
+		}
+	
 		console.log(str+" "+rcourse);
 }
 
@@ -294,18 +340,65 @@ function logReqRow(row,program,course, mode, color_idx=1){
 								fromreqbox=fromreq.getBoundingClientRect();
 								toreqbox=toreq.getBoundingClientRect();
 							
-								fromreqbox.cx=fromreqbox.left+((fromreqbox.right-fromreqbox.left)/2);
-								fromreqbox.cy=fromreqbox.top+((fromreqbox.bottom-fromreqbox.top)/2);
-								toreqbox.cx=toreqbox.left+((toreqbox.right-toreqbox.left)/2);
-								toreqbox.cy=toreqbox.top+((toreqbox.bottom-toreqbox.top)/2);
+								// Compute bounding box parameters
+								fromreqbox.w=(fromreqbox.right-fromreqbox.left);
+								fromreqbox.h=(fromreqbox.bottom-fromreqbox.top);
+								fromreqbox.cx=fromreqbox.left+(fromreqbox.w/2);
+								fromreqbox.cy=fromreqbox.top+(fromreqbox.h/2);
+								toreqbox.w=(toreqbox.right-toreqbox.left);
+								toreqbox.h=(toreqbox.bottom-toreqbox.top);
+								toreqbox.cx=toreqbox.left+(toreqbox.w/2);
+								toreqbox.cy=toreqbox.top+(toreqbox.h/2);
+							
+								dx=fromreqbox.cx-toreqbox.cx;
+								dy=fromreqbox.cy-toreqbox.cy;
+							
+								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet
+								// if(a.left > b.left) dx=a.left-b.roght;
+								// if(a.left < b.left) dx=b.left-a.right;
+							  // else dx=0;
+							
+								var currid=makeRandomID();
+							
+								fromobj={id:currid,dir:"from",dx:dx,dy:dy,box:fromreqbox};
+								toobj={id:currid,dir:"to",dx:dx,dy:dy,box:toreqbox};
+							
+								// Detect interconnection variant - 7 cases
+								if(dx==0){
+										if(dy>0){
+												fromobj.side="top";
+												toobj.side="bottom";
+												courses[program+course].bottom.push(fromobj);
+												courses[program+r.code].top.push(toobj);
+										}else{
+												fromobj.side="bottom";
+												toobj.side="top";
+												courses[program+course].top.push(fromobj);
+												courses[program+r.code].bottom.push(toobj);
+										}
+								}else if(dy==0){
+										if(dx>0){
+												fromobj.side="left";
+												toobj.side="right";											
+												courses[program+course].right.push(fromobj);
+												courses[program+r.code].left.push(toobj);
+										}else{
+												fromobj.side="right";
+												toobj.side="left";												
+												courses[program+course].left.push(fromobj);
+												courses[program+r.code].right.push(toobj);
+										}
+								}
+							
+								arrows.push({id:currid,from:fromobj,to:toobj});
 							
                 fromreq.classList.add("selected-course");                 
                 fromreq.style.backgroundColor=colors[color_idx];
 							
-								drawArrow(fromreqbox.cx,fromreqbox.cy,toreqbox.cx,toreqbox.cy);
+								// drawArrow(fromreqbox.cx,fromreqbox.cy,toreqbox.cx,toreqbox.cy);
 													 
 								// If this course was found we recurse further
-								logReqRow(forrk[r.code],program,r.code,"and");
+								logReqRow(program,course,courses);
             }
             str += r.credits + " " + r.code;
         }
@@ -344,6 +437,21 @@ function drawArrow(x1,y1,x2,y2)
 		ctx.lineTo(x2-pdx+adx,y2-pdy+ady);
 		ctx.lineTo(x2,y2);	
 		ctx.fill();	
+}
+
+//-------------------------------------------------------------------------------------------------
+// makeRandomID - Random hex number
+//-------------------------------------------------------------------------------------------------
+
+function makeRandomID()
+{
+		var str="";
+		var characters       = 'ABCDEF0123456789';
+		var charactersLength = characters.length;
+		for ( var i = 0; i < 16; i++ ) {
+				str += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}	
+		return str;
 }
 
 //------------------------------------=======############==========----------------------------------------
