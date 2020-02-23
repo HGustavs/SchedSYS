@@ -16,7 +16,7 @@ var data=[
 			{			// Year 3
 						"4":[{"name":"Operativsystem","hp":"7.5","spd":0.5, "code":"IT391G"},{"name":"Webbutveckling - content management och drift",hp:"7.5","spd":0.5,"code":"IT509G"}],
 						"5":[{"name":"Webbteknologi - forskning och utveckling","hp":"7.5","spd":0.5,"code":"IT515G"},{"name":"Informationssäkerhet - Introduktion",hp:"7.5","spd":0.5,"code":"IT139G"}],
-						"1":[{"name":"Examensarbete i informationsteknologi med inriktning mot webbprogrammering",hp:"30",spd:1.0,"code":"IT391G"}],
+						"1":[{"name":"Examensarbete i informationsteknologi med inriktning mot webbprogrammering",hp:"30",spd:1.0,"code":"IT353G"}],
 						"2":[]		
 			}
 	]},
@@ -83,5 +83,5 @@ var forrk={
 	"IT509G":[[{"type":"course","code":"IT350G","credits":15}]],
 	"IT515G":[[{"type":"course","code":"IT350G","credits":15}],[{"type":"course","code":"IT315G","credits":7.5}]],	
 	"IT139G":[],
-	"IT391G":[[{"type":"course","code":"IT515G","credits":7.5}],[{"type":"course","code":"IT509G","credits":7.5}]],
+	"IT353G":[[{"type":"course","code":"IT515G","credits":7.5}],[{"type":"course","code":"IT509G","credits":7.5}]],
 };

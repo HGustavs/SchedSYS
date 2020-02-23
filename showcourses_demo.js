@@ -287,50 +287,56 @@ function logReqe(event){
 		
     str = logReqRow(courseforrk,rprogram,rcourse,"and");	
 	
+	
 		// Draw all arrows
 		for(var i=0;i<arrows.length;i++){
 				var arrow=arrows[i];
+				
+				// I believe that left/right should have x-major sorting instead of y major sorting
+				// Further testing needed to figure out if we have any situations with many crossing arrows?
+			
 				if(arrow.from.side=="top"){
-						var x1=arrow.from.box.cx;
+						arrow.from.arr.sort(function(a, b){if(a.dy==b.dy){return b.dx-a.dx}else{return b.dy-a.dy}});
+						var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 						var y1=arrow.from.box.top;
 				}
 				if(arrow.from.side=="bottom"){
-						var x1=arrow.from.box.cx;
+						arrow.from.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
+						var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 						var y1=arrow.from.box.bottom;
 				}
 				if(arrow.from.side=="left"){
+						arrow.from.arr.sort(function(a, b){if(a.dx==b.dx){return a.dy-b.dy}else{return b.dx-a.dx}});
 						var x1=arrow.from.box.left;
-						var y1=arrow.from.box.cy;
+						var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 				}
 				if(arrow.from.side=="right"){
+						arrow.from.arr.sort(function(a, b){if(a.dx==b.dx){return a.dy-b.dy}else{return b.dx-a.dx}});
 						var x1=arrow.from.box.right;
-						var y1=arrow.from.box.cy;
+						var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 				}			
 				if(arrow.to.side=="top"){
-						arrow.to.arr.sort(function(a, b){console.log(a,b);if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
+						arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
 						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 						var y2=arrow.to.box.top;
 				}
-
 				if(arrow.to.side=="bottom"){
-						arrow.to.arr.sort(function(a, b){console.log(a,b);if(a.dy==b.dy){return a.dx-b.dx}else{return a.dy-b.dy}});
+						arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return a.dy-b.dy}});
 						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 						var y2=arrow.to.box.bottom;
 				}
 				if(arrow.to.side=="left"){
 						var x2=arrow.to.box.left;
-						var y2=arrow.to.box.cy;
+						arrow.to.arr.sort(function(a, b){if(a.dx==b.dx){return b.dy-a.dy}else{return a.dx-b.dx}});
+						var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 				}
-
 				if(arrow.to.side=="right"){
 						var x2=arrow.to.box.right;
-						var y2=arrow.to.box.cy;
+						arrow.to.arr.sort(function(a, b){if(a.dx==b.dx){return b.dy-a.dy}else{return a.dx-b.dx}});
+						var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 				}			
 				drawArrow(x1,y1,x2,y2);
-				// console.log(i,arrow);
 		}
-	
-		console.log(str+" "+rcourse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -355,8 +361,9 @@ function logReqRow(row,program,course, mode, color_idx=1){
             if(fromreq!=null&&toreq!=null){
 								frbox=fromreq.getBoundingClientRect();
 								tobox=toreq.getBoundingClientRect();
-
-								// Kan man  få dx etc i riktiga koordinater i stället? mer lämpligt då vi får mellanrummet - If no overlap in X / Y
+							
+								// Depending on the overlap situation we compute distance between extremes of boxes rather than euclidian midpoints
+								// If no overlap in X / Y
 								if((frbox.left>tobox.right)||(frbox.right<tobox.left)){
 										if(frbox.left>tobox.right){
 												dx=tobox.right-frbox.left;
@@ -374,8 +381,8 @@ function logReqRow(row,program,course, mode, color_idx=1){
 										}
 								}else{
 										dy=0;		
-								}							
-
+								}		
+							
 								// This id lets us search for connectors
 								var currid=makeRandomID();
 							
@@ -448,12 +455,14 @@ function logReqRow(row,program,course, mode, color_idx=1){
 
 function drawArrow(x1,y1,x2,y2)
 {
+		ctx.lineWidth=2.0;
+	
 		// Reflect vector and make unit length * 3
 		dx=-(y2-y1);
 		dy=x2-x1;
 		len=Math.sqrt((dx*dx)+(dy*dy));
-		adx=(dx/len)*3;
-		ady=(dy/len)*3;
+		adx=(dx/len)*4.5;
+		ady=(dy/len)*4.5;
 	
 		// Shorten vector to unit length * 8
 		dx=x2-x1;
