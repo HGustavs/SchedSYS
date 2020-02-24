@@ -252,6 +252,7 @@ function findIndex(arr,id)
 // redrawArrows - Redraws arrows based on rprogram and rcourse variables
 //-------------------------------------------------------------------------------------------------
 
+
 var rprogram="UNK";
 var rcourse="UNK";
 function redrawArrows()
@@ -259,6 +260,15 @@ function redrawArrows()
 		if(rprogram!="UNK"&&rcourse!="UNK"){
 
 				var courseforrk=forrk[rcourse];
+
+        // Clear previously selected courses and highlight current
+        const scors = document.querySelectorAll(".selected-course");
+	    	for (let i = 0; i < scors.length; i++) {
+            let scor=scors[i];
+            scor.style.backgroundColor=colors[0];
+            scor.classList.remove("selected-course");
+        }
+        document.getElementById(event.target.id).classList.add("selected-course");
 
 				// Clear all top/left/bottom/right arrays for all courses in affected program and add to courses array
 				for(var i=0;i<data.length;i++){
