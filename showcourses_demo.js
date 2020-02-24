@@ -303,6 +303,8 @@ function redrawArrows()
 
 				ctx.clearRect(0,0,2000,2000);
 				console.log(arrows.length);
+			
+				var col="#841";
 
 				// Draw all arrows
 				for(var i=0;i<arrows.length;i++){
@@ -320,7 +322,6 @@ function redrawArrows()
 
 						// I believe that left/right should have x-major sorting instead of y major sorting
 						// Further testing needed to figure out if we have any situations with many crossing arrows?
-						col="#000";
 						if(arrow.from.side=="top"){
 								var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 								var y1=arrow.from.box.top;
@@ -328,7 +329,6 @@ function redrawArrows()
 						if(arrow.from.side=="bottom"){
 								var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
 								var y1=arrow.from.box.bottom;
-								col="#08a";
 						}
 						if(arrow.from.side=="left"){
 								var x1=arrow.from.box.left;
@@ -337,11 +337,9 @@ function redrawArrows()
 						if(arrow.from.side=="right"){
 								var x1=arrow.from.box.right;
 								var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
-								col="#0a0";
 						}			
 						if(arrow.to.side=="top"){
 								arrow.to.arr.sort(function(a, b){return Math.atan2(b.dy,b.dx)-Math.atan2(a.dy,a.dx)});			
-								col="#884";
 								//arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
 								var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
 								var y2=arrow.to.box.top;

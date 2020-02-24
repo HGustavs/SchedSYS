@@ -1,5 +1,15 @@
 <?php
-include_once('config.php');
+
+// ------------------------------------------------------------------------------------------------------------
+// -----------=============######## Second version Kiosk System with XML ########=============-----------
+// ------------------------------------------------------------------------------------------------------------
+//  Copyright a97marbr / HGustavs
+//
+//        (\ /)
+//        (. .)           
+//       c(")(")  ∴ 
+//-------------------------------------------------------------------------------------------------------------
+
 function isprog($str)
 {
 		if (strlen($str)==11&&is_numeric(substr($str,-6,2))) return true;
@@ -40,10 +50,12 @@ function issign($str)
 $oentries=Array();
 $oentry=Array();
 
-// $file = 'https://cloud.timeedit.net/his/web/schema/ri107565X25Z03Q5Z56g2Yh0yZ026Y18Q0AgQY6Q5675c570nyu2Qu.xml';
-
-$file = 'https://cloud.timeedit.net/his/web/schema/ri107475X45Z03Q0Z56g2Y00y6026Y11Q02gQY6Q56757.xml';
-$delta = 'https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.xml?tab=33&object='.SIGNATURE;
+// Signature or cached history
+if(strlen($_GET['inurl'])==6){
+		$file="https://cloud.timeedit.net/his/web/timeedit/p/pss/schedule/schema.xml?tab=33&object=".$_GET['inurl'];
+}else{
+		$file="https://cloud.timeedit.net/his/web".$_GET['inurl'];
+}
 
 $dom = new DomDocument;
 $dom->preserveWhiteSpace = FALSE;

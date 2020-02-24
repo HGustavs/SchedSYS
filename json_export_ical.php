@@ -11,7 +11,7 @@
 //-------------------------------------------------------------------------------------------------------------
 
 date_default_timezone_set('Europe/Stockholm');
-$gcontent = file_get_contents("https://calendar.google.com/calendar/ical/c393c23i4fej7huhs9jdd0fnao%40group.calendar.google.com/private-48840e1db3184bd9f256a8c26f6bb9b6/basic.ics");
+$gcontent = file_get_contents("https://calendar.google.com/calendar/ical".$_GET['inurl']);
 $contentzz = explode("\n", $gcontent);
 
 $dayarr = array();
