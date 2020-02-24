@@ -268,7 +268,7 @@ function redrawArrows()
             scor.style.backgroundColor=colors[0];
             scor.classList.remove("selected-course");
         }
-        document.getElementById(event.target.id).classList.add("selected-course");
+        document.getElementById(rprogram+rcourse).classList.add("selected-course");
 
 				// Clear all top/left/bottom/right arrays for all courses in affected program and add to courses array
 				for(var i=0;i<data.length;i++){
