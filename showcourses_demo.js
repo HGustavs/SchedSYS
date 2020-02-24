@@ -221,7 +221,7 @@ function showdata() {
 }
 
 //-------------------------------------------------------------------------------------------------
-// zoomin/out - Update positions of all elements based on the zoom level and view space coordinate
+// updatepos - Update positions of all elements based on the zoom level and view space coordinate
 //-------------------------------------------------------------------------------------------------
 
 function updatepos()
@@ -233,6 +233,7 @@ function updatepos()
 				coursebox.style.left=Math.round((course.x*zoomfact)+(scrollx*(1.0/zoomfact)))+"px";
 				coursebox.style.top=Math.round((course.y*zoomfact)+(scrolly*(1.0/zoomfact)))+"px";
 		}
+		redrawArrows();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -248,105 +249,121 @@ function findIndex(arr,id)
 }
 
 //-------------------------------------------------------------------------------------------------
-// logReq - Click event for course, find course parameters from element id, and recurse into requirements 
+// redrawArrows - Redraws arrows based on rprogram and rcourse variables
 //-------------------------------------------------------------------------------------------------
 
-function logReqe(event){
-		var rprogram=event.target.id.substr(0,5);
-		var rcourse=event.target.id.substr(5);
-		var courseforrk=forrk[rcourse];
+var rprogram="UNK";
+var rcourse="UNK";
+function redrawArrows()
+{
+		if(rprogram!="UNK"&&rcourse!="UNK"){
 
-		// Clear all top/left/bottom/right arrays for all courses in affected program and add to courses array
-		for(var i=0;i<data.length;i++){
-				var program=data[i];
-				for(var j=0;j<program.years;j++){
-					var periods=program.year[j];
-						for(var k=0;k<4;k++){
-								var period=0;
-								if(k==0) period=periods["4"];
-								if(k==1) period=periods["5"];
-								if(k==2) period=periods["1"];							
-								if(k==3) period=periods["2"];
-								if(typeof period!="undefined"){
-										for(var l=0;l<period.length;l++){
-												var course=period[l];
-												course.left=[];
-												course.right=[];
-												course.top=[];
-												course.bottom=[];
-												// Assign to courses array
-												courses[rprogram+course.code]=course;
+				var courseforrk=forrk[rcourse];
+
+				// Clear all top/left/bottom/right arrays for all courses in affected program and add to courses array
+				for(var i=0;i<data.length;i++){
+						var program=data[i];
+						for(var j=0;j<program.years;j++){
+							var periods=program.year[j];
+								for(var k=0;k<4;k++){
+										var period=0;
+										if(k==0) period=periods["4"];
+										if(k==1) period=periods["5"];
+										if(k==2) period=periods["1"];							
+										if(k==3) period=periods["2"];
+										if(typeof period!="undefined"){
+												for(var l=0;l<period.length;l++){
+														var course=period[l];
+														course.left=[];
+														course.right=[];
+														course.top=[];
+														course.bottom=[];
+														// Assign to courses array
+														courses[rprogram+course.code]=course;
+												}
 										}
 								}
 						}
 				}
-		}
-	
-		// Clear all arrows
-		arrows=[];
-		
-    str = logReqRow(courseforrk,rprogram,rcourse,"and");	
-	
-		ctx.clearRect(0,0,2000,2000);
-		console.log(arrows.length);
-	
-		// Draw all arrows
-		for(var i=0;i<arrows.length;i++){
-				var arrow=arrows[i];
 
-				// if(arrow.from.course=="IT311G"||arrow.to.course=="IT311G") console.log(arrow);
-				if(arrow.from.arr.issorted==false){
-						arrow.from.arr.issorted=true;
-						arrow.from.arr.sort(function(a, b){return Math.atan2(a.dy,a.dx)-Math.atan2(b.dy,b.dx)});
-				}
-				if(arrow.to.arr.issorted==false){			
-						arrow.to.arr.issorted=true;
-						arrow.to.arr.sort(function(a, b){return Math.atan2(a.dy,a.dx)-Math.atan2(b.dy,b.dx)});			
-				}
-			
-				// I believe that left/right should have x-major sorting instead of y major sorting
-				// Further testing needed to figure out if we have any situations with many crossing arrows?
-				col="#000";
-				if(arrow.from.side=="top"){
-						var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
-						var y1=arrow.from.box.top;
-				}
-				if(arrow.from.side=="bottom"){
-						var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
-						var y1=arrow.from.box.bottom;
-						col="#08a";
-				}
-				if(arrow.from.side=="left"){
-						var x1=arrow.from.box.left;
-						var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
-				}
-				if(arrow.from.side=="right"){
-						var x1=arrow.from.box.right;
-						var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
-						col="#0a0";
-				}			
-				if(arrow.to.side=="top"){
-						arrow.to.arr.sort(function(a, b){return Math.atan2(b.dy,b.dx)-Math.atan2(a.dy,a.dx)});			
-						col="#884";
-						//arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
-						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
-						var y2=arrow.to.box.top;
-				}
-				if(arrow.to.side=="bottom"){
-						var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
-						var y2=arrow.to.box.bottom;
-				}
-				if(arrow.to.side=="left"){
-						var x2=arrow.to.box.left;
-						var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
-				}
-				if(arrow.to.side=="right"){
-						var x2=arrow.to.box.right;
-						var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
+				// Clear all arrows
+				arrows=[];
 
+				str = logReqRow(courseforrk,rprogram,rcourse,"and");	
+
+				ctx.clearRect(0,0,2000,2000);
+				console.log(arrows.length);
+
+				// Draw all arrows
+				for(var i=0;i<arrows.length;i++){
+						var arrow=arrows[i];
+
+						// if(arrow.from.course=="IT311G"||arrow.to.course=="IT311G") console.log(arrow);
+						if(arrow.from.arr.issorted==false){
+								arrow.from.arr.issorted=true;
+								arrow.from.arr.sort(function(a, b){return Math.atan2(a.dy,a.dx)-Math.atan2(b.dy,b.dx)});
+						}
+						if(arrow.to.arr.issorted==false){			
+								arrow.to.arr.issorted=true;
+								arrow.to.arr.sort(function(a, b){return Math.atan2(a.dy,a.dx)-Math.atan2(b.dy,b.dx)});			
+						}
+
+						// I believe that left/right should have x-major sorting instead of y major sorting
+						// Further testing needed to figure out if we have any situations with many crossing arrows?
+						col="#000";
+						if(arrow.from.side=="top"){
+								var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
+								var y1=arrow.from.box.top;
+						}
+						if(arrow.from.side=="bottom"){
+								var x1=arrow.from.box.left+((arrow.from.box.width/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
+								var y1=arrow.from.box.bottom;
+								col="#08a";
+						}
+						if(arrow.from.side=="left"){
+								var x1=arrow.from.box.left;
+								var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
+						}
+						if(arrow.from.side=="right"){
+								var x1=arrow.from.box.right;
+								var y1=arrow.from.box.top+((arrow.from.box.height/(arrow.from.arr.length+1))*findIndex(arrow.from.arr,arrow.id));
+								col="#0a0";
+						}			
+						if(arrow.to.side=="top"){
+								arrow.to.arr.sort(function(a, b){return Math.atan2(b.dy,b.dx)-Math.atan2(a.dy,a.dx)});			
+								col="#884";
+								//arrow.to.arr.sort(function(a, b){if(a.dy==b.dy){return a.dx-b.dx}else{return b.dy-a.dy}});
+								var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
+								var y2=arrow.to.box.top;
+						}
+						if(arrow.to.side=="bottom"){
+								var x2=arrow.to.box.left+((arrow.to.box.width/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
+								var y2=arrow.to.box.bottom;
+						}
+						if(arrow.to.side=="left"){
+								var x2=arrow.to.box.left;
+								var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
+						}
+						if(arrow.to.side=="right"){
+								var x2=arrow.to.box.right;
+								var y2=arrow.to.box.top+((arrow.to.box.height/(arrow.to.arr.length+1))*findIndex(arrow.to.arr,arrow.id));
+
+						}
+						drawArrow(x1,y1,x2,y2,col);
 				}
-				drawArrow(x1,y1,x2,y2,col);
 		}
+
+}
+
+//-------------------------------------------------------------------------------------------------
+// logReq - Click event for course, find course parameters from element id, and recurse into requirements 
+//-------------------------------------------------------------------------------------------------
+
+function logReqe(event){
+		rprogram=event.target.id.substr(0,5);
+		rcourse=event.target.id.substr(5);
+	
+		redrawArrows();
 }
 
 //-------------------------------------------------------------------------------------------------
