@@ -11,6 +11,7 @@ var startTop,startLeft;
 var sscrollx,sscrolly;
 var cwidth,cheight;
 var colors = ["white","Gold","pink","yellow","CornflowerBlue"];
+var hasRecursion=false;
 
 // Zoom variables
 var zoomfact=1.0;
@@ -135,7 +136,12 @@ var ctx;
 function showdata() {
 		var container=document.getElementById("container");
 		var containerbox=container.getBoundingClientRect();	
-	
+    
+        if(document.getElementById("hasRecursion").checked){
+            hasRecursion=true;
+        }else{
+            hasRecursion=false;
+        }
 		// Compute bounds of 
 		cwidth=containerbox.width;
 		cheight=containerbox.height;
@@ -487,8 +493,10 @@ function logReqRow(row,program,course, mode, color_idx=1){
                 fromreq.classList.add("selected-course");                 
                 fromreq.style.backgroundColor=colors[color_idx];
 							
-								// If this course was found we recurse further
-								logReqRow(forrk[r.code],program,r.code,"and");
+                                // If this course was found we recurse further
+                                if(hasRecursion){
+                                    logReqRow(forrk[r.code],program,r.code,"and");
+                                }
             }
             str += r.credits + " " + r.code;
         }
