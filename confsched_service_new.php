@@ -12,6 +12,16 @@
 
 date_default_timezone_set('Europe/Stockholm');
 $debug="NONE!";
+
+//------------------------------------------------------------------------------------------------
+// getOP
+//------------------------------------------------------------------------------------------------
+
+function getOP($name)
+{
+		if(isset($_POST[$name]))	return urldecode($_POST[$name]);
+		else return "UNK";
+}
 	
 /*--------------------------------------------------------------------------------
 	 Create Database
@@ -26,6 +36,22 @@ $sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varcha
 $log_db->exec($sql);	
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id VARCHAR(32) PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
+
+$link=getOP('link');
+$kind=getOP('kind');
+$aux=getOP('aux');
+
+/*--------------------------------------------------------------------------------
+	 Re-Read synchronized database
+----------------------------------------------------------------------------------*/	
+
+// Retrieve full database and swizzle into associative array for each day
+$cdbarr=Array();
+$result = $log_db->query('SELECT * FROM conf;');
+$rows = $result->fetchAll();
+foreach ($rows as $row) {
+		$cdbarr[$row['id']]=$row;
+}
 
 /*
 
@@ -45,27 +71,12 @@ $log_db->exec($sql);
 */
 
 
-/*--------------------------------------------------------------------------------
-	 Re-Read synchronized database
-----------------------------------------------------------------------------------*/	
 
-// Retrieve full database and swizzle into associative array for each day
-$dbarr=Array();
-$result = $log_db->query('SELECT * FROM sched;');
-$rows = $result->fetchAll();
-foreach ($rows as $row) {
-		if(isset($dbarr[$row['datum']])){
-				array_push($dbarr[$row['datum']], $row['datan']);
-		}else{
-				$dbarr[$row['datum']]=Array();
-				array_push($dbarr[$row['datum']], $row['datan']);
-		}
-}
 
 $called_service="Gladpack";
 $ret = array(
     "debug" => $debug,
-    "data" => $dbarr,
+    "confdata" => $cdbarr,
     "called_service" => $called_service
 );
 
