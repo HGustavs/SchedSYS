@@ -27,28 +27,8 @@ $log_db->exec($sql);
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id VARCHAR(32) PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
 
-//-------------------------------------------------------------------------------------------------
-// readjson - function for reading a json from a link and saving it to array incl error correction
-//-------------------------------------------------------------------------------------------------
+/*
 
-function readJson($filename)
-{
-		global $debug;
-
-		$jsontext = file_get_contents($filename); 
-		$jsondata = json_decode($jsontext);
-		if(json_last_error()!=JSON_ERROR_NONE){
-				$debug="Error:\nJson error for import!";
-		}	
-		return $jsondata;
-}
-
-//----------------------------------------------------------------------------------
-// updateElement - function for updating element using sql ported over from old kiosk
-//----------------------------------------------------------------------------------
-
-function createElement($id,$datum,$element)
-{
 		global $debug;
 		global $log_db;
 	
@@ -61,63 +41,9 @@ function createElement($id,$datum,$element)
 			$error=$query->errorInfo();
 			$debug="Error:\nImporting schedule element from history!\n".$error[2];
 		}	
-}
 
-/*--------------------------------------------------------------------------------
-	 Import history
-----------------------------------------------------------------------------------*/	
+*/
 
-// Check if no history, if so, read history by default. select count(*) from sched if count is zero import history
-$res=$log_db->query("SELECT COUNT(*) FROM sched;");
-if(!$res) {
-	$error=$res->errorInfo();
-	$debug="Error:\nImporting schedule element from history!\n".$error[2];
-}
-
-$rowcnt=$res->fetchColumn();
-if ($rowcnt==0){
-	$jsondata=readJson('history.json');
-	
-	// Parse each of the elements in json array and insert into database
-	foreach ($jsondata as $element) {
-			$id=$element->id;
-			$datum=$element->startdatum;
-			createElement($id,$datum,$element);
-	}
-}else{
-//		echo "Rows in history:".$rowcnt;
-}
-
-/*--------------------------------------------------------------------------------
-	 Synchronize
-----------------------------------------------------------------------------------*/	
-
-// Create array for synchronization of database
-$dbarr=Array();
-$result = $log_db->query('SELECT * FROM sched;');
-$rows = $result->fetchAll();
-foreach ($rows as $row) {
-		$dbarr[$row['id']]=$row['datan'];
-}
-
-// Read data from calendar json
-$calendar=readJson('ical.json');
-
-// Synchronize data from calendar with database
-foreach ($calendar as $element) {
-		$id=$element->id;
-		$datum=$element->startdatum;
-
-		// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
-		if(isset($dbarr[$id])){
-				if($dbarr[$id]!=json_encode($element)){
-						echo "Change detected: ".$id." ".$datum."\n";
-						// modifElement($id,$datum,$element);
-				}
-		}else{
-				createElement($id,$datum,$element);
-		}
-}
 
 /*--------------------------------------------------------------------------------
 	 Re-Read synchronized database
