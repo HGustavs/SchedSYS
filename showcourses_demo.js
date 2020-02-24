@@ -456,11 +456,6 @@ function logReqRow(row,program,course, mode, color_idx=1){
 										toobj.arr.push({dx:frbox.left,dy:frbox.top,id:currid});
 								
 										arrows.push({id:currid,from:fromobj,to:toobj});
-								}else{
-//										fromobj.arr.push({dx:tobox.left,dy:tobox.top,id:currid});
-//										toobj.arr.push({dx:frbox.left,dy:frbox.top,id:currid});
-									
-//										arrows.push({id:currid,from:fromobj,to:toobj});								
 								}
 							
 								// Update styling
