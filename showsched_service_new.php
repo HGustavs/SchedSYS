@@ -100,8 +100,10 @@ foreach ($rows as $row) {
 		$dbarr[$row['id']]=$row['datan'];
 }
 
+// Foreach ical entry
 // Read data from calendar json
-$calendar=readJson('ical.json');
+//$calendar=readJson('ical.json');
+$calendar=readJson('json_export_ical.php?inurl='.$ical);
 
 // Synchronize data from calendar with database
 foreach ($calendar as $element) {
@@ -119,9 +121,19 @@ foreach ($calendar as $element) {
 		}
 }
 
+// End foreach ical
+
 /*--------------------------------------------------------------------------------
 	 Re-Read synchronized database
 ----------------------------------------------------------------------------------*/	
+
+// Retrieve full config and swizzle into associative array for each config id
+$cdbarr=Array();
+$result = $log_db->query('SELECT * FROM conf;');
+$rows = $result->fetchAll();
+foreach ($rows as $row) {
+		$cdbarr[$row['id']]=$row;
+}
 
 // Retrieve full database and swizzle into associative array for each day
 $dbarr=Array();
@@ -140,6 +152,7 @@ $called_service="Gladpack";
 $ret = array(
     "debug" => $debug,
     "data" => $dbarr,
+    "confdata" => $cdbarr,	
     "called_service" => $called_service
 );
 

@@ -40,6 +40,7 @@ $log_db->exec($sql);
 $link=getOP('link');
 $kind=getOP('kind');
 $aux=getOP('aux');
+$id=getOP('id');
 
 /*--------------------------------------------------------------------------------
 	 Re-Read synchronized database
@@ -53,26 +54,24 @@ foreach ($rows as $row) {
 		$cdbarr[$row['id']]=$row;
 }
 
+// Change detection (so we can avoid over-updating sqlite file)
+if(!isset($cdbarr[$id])){
+		// Make insert
+//		if($link!="UNK"&&$kind!="UNK"&&$aux!="UNK"){
+				$query = $log_db->prepare('INSERT INTO conf(link,kind,aux) VALUES (:link,:kind,:aux)');
+				$query->bindParam(':link', $link);
+				$query->bindParam(':kind', $kind);
+				$query->bindParam(':aux', $aux);
+				if(!$query->execute()) {
+							$error=$query->errorInfo();
+							$debug="Error:\nError saving config to database!\n".$error[2];
+				}	
+//		}
+}else{
+		// Check if changed, if so, make update
+}
 
-// WE can use cdbarray to check if insert or update
-/*
-
-		global $debug;
-		global $log_db;
-	
-		$jsonelement = json_encode($element);
-		$query = $log_db->prepare('INSERT INTO sched(id,datum,datan) VALUES (:id,:datum,:datan)');
-		$query->bindParam(':datum', $datum);
-		$query->bindParam(':datan', $jsonelement);
-		$query->bindParam(':id', $id);
-		if(!$query->execute()) {
-			$error=$query->errorInfo();
-			$debug="Error:\nImporting schedule element from history!\n".$error[2];
-		}	
-
-*/
-
-$called_service="Gladpack";
+$called_service="Gladslack";
 $ret = array(
     "debug" => $debug,
     "confdata" => $cdbarr,
