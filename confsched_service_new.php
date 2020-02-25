@@ -10,9 +10,6 @@
 //       c(")(")  ∴ 
 //-------------------------------------------------------------------------------------------------------------
 
-date_default_timezone_set('Europe/Stockholm');
-$debug="NONE!";
-
 //------------------------------------------------------------------------------------------------
 // getOP
 //------------------------------------------------------------------------------------------------
@@ -22,10 +19,18 @@ function getOP($name)
 		if(isset($_POST[$name]))	return urldecode($_POST[$name]);
 		else return "UNK";
 }
-	
-/*--------------------------------------------------------------------------------
-	 Create Database
-----------------------------------------------------------------------------------*/	
+
+//------------------------------------==========############==========----------------------------------------
+//                                  Startup Create Database & Read Config
+//------------------------------------==========############==========----------------------------------------
+
+date_default_timezone_set('Europe/Stockholm');
+$debug="NONE!";
+
+$link=getOP('link');
+$kind=getOP('kind');
+$aux=getOP('aux');
+$id=getOP('id');
 
 // Updated database! - id is varchar 32 so we can store uuids of different kinds if need be
 // New feature: Each row contains one element not one day - this is so we can synch more effectively using ids
@@ -37,22 +42,17 @@ $log_db->exec($sql);
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
 
-$link=getOP('link');
-$kind=getOP('kind');
-$aux=getOP('aux');
-$id=getOP('id');
-
-/*--------------------------------------------------------------------------------
-	 Re-Read synchronized database
-----------------------------------------------------------------------------------*/	
-
-// Retrieve full database and swizzle into associative array for each day
+// Retrieve config from database
 $cdbarr=Array();
 $result = $log_db->query('SELECT * FROM conf;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
 		$cdbarr[$row['id']]=$row;
 }
+
+//------------------------------------==========############==========----------------------------------------
+//                                     Re-Read synchronized database
+//------------------------------------==========############==========----------------------------------------
 
 // Change detection (so we can avoid over-updating sqlite file)
 if(!isset($cdbarr[$id])){

@@ -172,8 +172,9 @@
             <div>
                 <fieldset>
                     <legend>Zoom</legend>
-                    <input type="button" value="Zoom in" onclick='zoomin();' />
-                    <input type="button" value="Zoom out" onclick='zoomout();' />									
+										<input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();">
+										<label>Gurk:</label><input type="text" placeholder="S_BROM" id="link" value="Link">
+										<label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select>
                 </fieldset>
                 <fieldset>
                     <legend>Requirement recursion</legend>

@@ -103,7 +103,7 @@ foreach ($rows as $row) {
 // Foreach ical entry
 // Read data from calendar json
 //$calendar=readJson('ical.json');
-$calendar=readJson('json_export_ical.php?inurl='.$ical);
+//$calendar=readJson('json_export_ical.php?inurl='.$ical);
 
 // Synchronize data from calendar with database
 foreach ($calendar as $element) {
