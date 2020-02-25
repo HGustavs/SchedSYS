@@ -8,6 +8,52 @@
     <script src="showsched.js"></script>
     
     <style>
+
+        #options-pane {
+            position: fixed;
+            top: 10px;
+            width: 280px;
+            bottom: 120px;
+            z-index: 5000;
+            background-color: #eb4;
+            color: #FFF;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            box-shadow: 0px 6px 10px #888;
+            padding: 10px;
+            transition: right .3s ease-in-out;
+        }
+
+        #options-pane-button {
+            display: inline-block;
+            vertical-align: top;
+						transform-origin: top left;            
+						transform: translate(20px,0px) rotate(90deg);					
+        }
+
+        #options-pane-content {
+						margin-left:20px;
+            vertical-align: top;
+            display: inline-block;
+        }
+
+        .show-options-pane {
+            right: 0px;
+        }
+
+        .hide-options-pane {
+            right: -270px;
+        }
+
+        .selected-entry {
+            box-shadow: 6px 6px 10px #888;
+        }
+
+        .hide {
+            display: none;
+        }
+						
+			
         body {
             font-family: Arial Narrow, Arial, sans-serif;
             font-size: 20px;
@@ -120,8 +166,22 @@
 
     </div>
 
-    <canvas id="canvas" width="450" height="125">
-    </canvas>
+   <div id="options-pane" class="hide-options-pane">
+        <div id="options-pane-button" onclick="fab_action();"><span id='optmarker'>&#9660;Options</span></div>
+        <div id="options-pane-content" >
+            <div>
+                <fieldset>
+                    <legend>Zoom</legend>
+                    <input type="button" value="Zoom in" onclick='zoomin();' />
+                    <input type="button" value="Zoom out" onclick='zoomout();' />									
+                </fieldset>
+                <fieldset>
+                    <legend>Requirement recursion</legend>
+                    <div><input id="hasRecursion" type="checkbox"  onclick='showdata();' checked /><label for="hasRecursion">Show full req. recursion</label></div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
 
 </body>
 

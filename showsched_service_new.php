@@ -24,7 +24,7 @@ $log_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $log_db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varchar(10), datan TEXT);';
 $log_db->exec($sql);	
-$sql = 'CREATE TABLE IF NOT EXISTS conf(id VARCHAR(32) PRIMARY KEY,link text,kind varchar(32),aux text);';
+$sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
 
 //-------------------------------------------------------------------------------------------------
