@@ -56,7 +56,7 @@ function timetopix(tidstr) {
 }
 
 //------------------------------------=======############==========----------------------------------------
-//                                           Display Data
+//                                          Display Data
 //------------------------------------=======############==========----------------------------------------
 
 function showdata() {
@@ -204,6 +204,37 @@ function getData() {
         url: 'showsched_service_new.php',
         dataType: 'json',
         data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
+    })
+		.done(data_returned)
+		.fail(function (e) {
+				alert(e.responseText);
+		})
+		.always(function () {
+				//alert( "complete" );
+		});
+}
+
+function makeServiceParam(apara)
+{
+		var para="";
+		for (var key in apara) {
+				para+="&"+key+"="+encodeURIComponent(apara[key]);
+		}
+		return para;
+}
+
+function addlink() {
+    let op = "DEFAULT";
+
+		let params = { "kind": document.getElementById('kind').value, 
+									 "link": document.getElementById('link').value,
+									 "aux":"Donk"};
+
+		var jqxhr = $.ajax({
+        type: 'POST',
+        url: 'confsched_service_new.php',
+        dataType: 'json',
+        data: "?op=doggin"+makeServiceParam(params)
     })
 		.done(data_returned)
 		.fail(function (e) {

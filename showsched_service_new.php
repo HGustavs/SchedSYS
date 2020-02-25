@@ -92,6 +92,14 @@ if ($rowcnt==0){
 	 Synchronize
 ----------------------------------------------------------------------------------*/	
 
+// Retrieve full config and swizzle into associative array for each config id
+$cdbarr=Array();
+$result = $log_db->query('SELECT * FROM conf;');
+$rows = $result->fetchAll();
+foreach ($rows as $row) {
+		$cdbarr[$row['id']]=$row;
+}
+
 // Create array for synchronization of database
 $dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
@@ -126,14 +134,6 @@ foreach ($calendar as $element) {
 /*--------------------------------------------------------------------------------
 	 Re-Read synchronized database
 ----------------------------------------------------------------------------------*/	
-
-// Retrieve full config and swizzle into associative array for each config id
-$cdbarr=Array();
-$result = $log_db->query('SELECT * FROM conf;');
-$rows = $result->fetchAll();
-foreach ($rows as $row) {
-		$cdbarr[$row['id']]=$row;
-}
 
 // Retrieve full database and swizzle into associative array for each day
 $dbarr=Array();
