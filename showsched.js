@@ -228,7 +228,7 @@ function addlink() {
 
 		let params = { "kind": document.getElementById('kind').value, 
 									 "link": document.getElementById('link').value,
-									 "aux":"Donk"};
+									 "aux":document.getElementById('sign').value};
 
 		var jqxhr = $.ajax({
         type: 'POST',

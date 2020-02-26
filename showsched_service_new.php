@@ -114,6 +114,7 @@ foreach ($rows as $row) {
 //$calendar=readJson('json_export_ical.php?inurl='.$ical);
 
 // Synchronize data from calendar with database
+/*
 foreach ($calendar as $element) {
 		$id=$element->id;
 		$datum=$element->startdatum;
@@ -128,7 +129,7 @@ foreach ($calendar as $element) {
 				createElement($id,$datum,$element);
 		}
 }
-
+*/
 // End foreach ical
 
 /*--------------------------------------------------------------------------------

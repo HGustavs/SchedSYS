@@ -152,6 +152,11 @@
             width: 900px;
             height: 250px;
         }
+			
+				#tab {
+						font-family:Arial Narrow;
+						font-size:12px;
+				}
     </style>
 
 </head>
@@ -171,15 +176,16 @@
         <div id="options-pane-content" >
             <div>
                 <fieldset>
-                    <legend>Zoom</legend>
+                    <legend>Write</legend>
 										<div><label>Link:</label><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
 										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
-										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"></div>
+										<div><label>Sign:</label><input type="text" placeholder="S_BROM" id="sign" value="Sign"></div>									
+										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"><input type="button" value="delete" onclick="deletelink();"></div>
 							</fieldset>
                 <fieldset>
-                    <legend>Requirement recursion</legend>
-                    <div><input id="hasRecursion" type="checkbox"  onclick='showdata();' checked /><label for="hasRecursion">Show full req. recursion</label></div>
-                </fieldset>
+                    <legend>Items</legend>
+										<div id="tab"></div>
+							</fieldset>							
             </div>
         </div>
     </div>
