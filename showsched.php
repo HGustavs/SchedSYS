@@ -153,17 +153,21 @@
             height: 250px;
         }
 			
-				#tab {
-						font-family:Arial Narrow;
-						font-size:10px;
-				}
-			
 				#tab table{
 						font-family:Arial Narrow;
 						font-size:10px;
 						font-weight:lighter;
 						color:#000;
+						border-collapse: collapse;
 				}
+
+				#tab td{
+						border:none;
+				}
+
+				#tab tr{
+						border:none;
+				}			
 			
 				.delbutto{
 						width:24px;
@@ -183,6 +187,14 @@
 				
 				#tab tr:nth-child(odd) {
 						background: #FFF
+				}		
+
+				#tab tr:nth-child(odd):hover {
+						background: #ffe8d0;
+				}			
+			
+				#tab tr:nth-child(even):hover {
+						background: #ddc880;
 				}			
 			
     </style>
@@ -205,7 +217,7 @@
             <div>
                 <fieldset>
                     <legend>Config</legend>
-										<div><label>Link:</label><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
+										<div><label>Link:</label><input type="hidden" value="kurgan" id="confid"><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
 										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
 										<div><label>Sign:</label><input type="text" placeholder="BROM" id="sign" value="Link"></div>
 										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"></div>

@@ -197,21 +197,7 @@ function showdata() {
 }
 
 function getData() {
-    let op = "DEFAULT";
-    let params = { "start_week": -2, "end_week": 2};
-    var jqxhr = $.ajax({
-        type: 'POST',
-        url: 'showsched_service_new.php',
-        dataType: 'json',
-        data: "op=" + op + "&params=" + encodeURIComponent(JSON.stringify(params))
-    })
-		.done(data_returned)
-		.fail(function (e) {
-				alert(e.responseText);
-		})
-		.always(function () {
-				//alert( "complete" );
-		});
+		service("GET",{ "start_week": -2, "end_week": 2});
 }
 
 function makeServiceParam(apara)
@@ -224,12 +210,29 @@ function makeServiceParam(apara)
 }
 
 function addlink() {
-    let op = "DEFAULT";
-
-		let params = { "kind": document.getElementById('kind').value, 
+		service("add",{ "kind": document.getElementById('kind').value, 
 									 "link": document.getElementById('link').value,
-									 "aux":document.getElementById('sign').value};
+									 "aux":document.getElementById('sign').value}
+					 );
+}
 
+function addlink() {
+
+}
+
+function clickConf(event)
+{
+		console.log(event.target.class+" "+event.target);
+		event.stopPropagation();
+}
+
+function delLink(param)
+{
+		service(add,{ "id": param});
+}
+
+function service(op,params)
+{
 		var jqxhr = $.ajax({
         type: 'POST',
         url: 'confsched_service_new.php',
@@ -245,34 +248,12 @@ function addlink() {
 		});
 }
 
-function dellink() {
-    let op = "DEFAULT";
-
-		let params = { "id": document.getElementById('kind').value, 
-									 "link": "",
-									 "aux":""};
-
-		var jqxhr = $.ajax({
-        type: 'POST',
-        url: 'confsched_service_new.php',
-        dataType: 'json',
-        data: "op=dellink"+makeServiceParam(params)
-    })
-		.done(data_returned)
-		.fail(function (e) {
-				alert(e.responseText);
-		})
-		.always(function () {
-				//alert( "complete" );
-		});
-}
-
 function updateConf(config)
 {
     cfStr="<table>";
     for(cfkey in config ){
 				var cf=config[cfkey];
-        cfStr+="<tr onclick='clickConf(event)' >";
+        cfStr+="<tr onclick='clickConf(\""+cf.id+"\")' >";
         cfStr+="<td><span class='delbutto' onclick='delLink("+cf.id+");'>&#x2718;</span></td>";
 				cfStr+="<td><span class='showurl'>"+cf.link+"</span></td>";
         cfStr+="<td>"+cf.kind+"</td>";
@@ -281,18 +262,6 @@ function updateConf(config)
     }
 		cfStr+="<table>";
     document.getElementById("tab").innerHTML=cfStr;
-}
-
-function clickConf(event)
-{
-		console.log(event.target.class+" "+event.target);
-		event.stopPropagation();
-}
-
-function delLink(param)
-{
-		console.log(param);
-		event.stopPropagation();
 }
 
 function data_returned(ret) {
