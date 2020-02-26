@@ -269,20 +269,30 @@ function dellink() {
 
 function updateConf(config)
 {
-    const cfs = Object.entries(config)
-    cfStr="";
-    //for(const [id,cf] of cfs ){
-    for(cf in cfs ){
-        console.log(cf.id,cf.link)
-        cfStr+="<div>";
-        cfStr+="<input id='cf_id_"+cf.id+"' value='"+cf.link+"'>";
-        cfStr+="<input id='cf_kind_"+cf.id+"' value='"+cf.kind+"'>";
-        cfStr+="<input id='cf_aux_"+cf.id+"' value='"+cf.aux+"'>";
-        cfStr+="<button onclick='saveLink("+cf.id+");'>update</buttton>";
-        cfStr+="<button onclick='delLink("+cf.id+");'>delete</buttton>";
-        cfStr+="</div>";
+    cfStr="<table>";
+    for(cfkey in config ){
+				var cf=config[cfkey];
+        cfStr+="<tr onclick='clickConf(event)' >";
+        cfStr+="<td><span class='delbutto' onclick='delLink("+cf.id+");'>&#x2718;</span></td>";
+				cfStr+="<td><span class='showurl'>"+cf.link+"</span></td>";
+        cfStr+="<td>"+cf.kind+"</td>";
+        cfStr+="<td>"+cf.aux+"</td>";
+        cfStr+="</tr>";
     }
-    document.getElementById("conf").innerHTML=cfStr;
+		cfStr+="<table>";
+    document.getElementById("tab").innerHTML=cfStr;
+}
+
+function clickConf(event)
+{
+		console.log(event.target.class+" "+event.target);
+		event.stopPropagation();
+}
+
+function delLink(param)
+{
+		console.log(param);
+		event.stopPropagation();
 }
 
 function data_returned(ret) {
