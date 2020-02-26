@@ -171,10 +171,13 @@
         <div id="options-pane-content" >
             <div>
                 <fieldset>
-                    <legend>Zoom</legend>
+                    <legend>Config</legend>
+                        <div id="conf"></div>    
+                        <hr>    
+
 										<div><label>Link:</label><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
 										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
-										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"></div>
+										<div><input type="button" value="add" onclick="addlink();"></div>
 							</fieldset>
                 <fieldset>
                     <legend>Requirement recursion</legend>

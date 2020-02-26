@@ -94,10 +94,14 @@ if ($rowcnt==0){
 
 // Retrieve full config and swizzle into associative array for each config id
 $cdbarr=Array();
+$icals=array();
 $result = $log_db->query('SELECT * FROM conf;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-		$cdbarr[$row['id']]=$row;
+        $cdbarr[$row['id']]=$row;
+        if($row['kind']=="ical"){
+            array_push($icals,$row["link"]);
+        }
 }
 
 // Create array for synchronization of database
@@ -105,28 +109,31 @@ $dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-		$dbarr[$row['id']]=$row['datan'];
+        $dbarr[$row['id']]=$row['datan'];
 }
 
 // Foreach ical entry
-// Read data from calendar json
-//$calendar=readJson('ical.json');
-//$calendar=readJson('json_export_ical.php?inurl='.$ical);
+foreach($icals as $ical){
 
-// Synchronize data from calendar with database
-foreach ($calendar as $element) {
-		$id=$element->id;
-		$datum=$element->startdatum;
+    // Read data from calendar json
+    //$calendar=readJson('ical.json');
+    $calendar=readJson('json_export_ical.php?inurl='.$ical);
 
-		// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
-		if(isset($dbarr[$id])){
-				if($dbarr[$id]!=json_encode($element)){
-						echo "Change detected: ".$id." ".$datum."\n";
-						// modifElement($id,$datum,$element);
-				}
-		}else{
-				createElement($id,$datum,$element);
-		}
+    // Synchronize data from calendar with database
+    foreach ($calendar as $element) {
+            $id=$element->id;
+            $datum=$element->startdatum;
+
+            // If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
+            if(isset($dbarr[$id])){
+                    if($dbarr[$id]!=json_encode($element)){
+                            echo "Change detected: ".$id." ".$datum."\n";
+                            // modifElement($id,$datum,$element);
+                    }
+            }else{
+                    createElement($id,$datum,$element);
+            }
+    }
 }
 
 // End foreach ical
