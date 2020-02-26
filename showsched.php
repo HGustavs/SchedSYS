@@ -155,8 +155,36 @@
 			
 				#tab {
 						font-family:Arial Narrow;
-						font-size:12px;
+						font-size:10px;
 				}
+			
+				#tab table{
+						font-family:Arial Narrow;
+						font-size:10px;
+						font-weight:lighter;
+						color:#000;
+				}
+			
+				.delbutto{
+						width:24px;
+						display:inline-block;
+						text-align:center;
+				}
+			
+				.showurl{
+						display:inline-block;
+						width:40px;
+						overflow:hidden;
+				}
+			
+				#tab tr:nth-child(even) {
+						background: #CCC
+				}
+				
+				#tab tr:nth-child(odd) {
+						background: #FFF
+				}			
+			
     </style>
 
 </head>
@@ -176,16 +204,13 @@
         <div id="options-pane-content" >
             <div>
                 <fieldset>
-                    <legend>Write</legend>
+                    <legend>Config</legend>
 										<div><label>Link:</label><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
 										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
-										<div><label>Sign:</label><input type="text" placeholder="S_BROM" id="sign" value="Sign"></div>									
-										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"><input type="button" value="delete" onclick="deletelink();"></div>
-							</fieldset>
-                <fieldset>
-                    <legend>Items</legend>
-										<div id="tab"></div>
-							</fieldset>							
+										<div><label>Sign:</label><input type="text" placeholder="BROM" id="sign" value="Link"></div>
+										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"></div>
+								</fieldset>
+								<div id="tab"></div>
             </div>
         </div>
     </div>

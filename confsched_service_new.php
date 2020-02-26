@@ -68,7 +68,15 @@ if(!isset($cdbarr[$id])){
 				}	
 //		}
 }else{
-		// Check if changed, if so, make update
+    $query = $log_db->prepare('UPDATE conf SET link=:link,kind=:kind,aux=:aux WHERE id=:id');
+    $query->bindParam(':link', $link);
+    $query->bindParam(':kind', $kind);
+    $query->bindParam(':aux', $aux);
+    $query->bindParam(':id', $id);
+    if(!$query->execute()) {
+                $error=$query->errorInfo();
+                $debug="Error:\nError saving config to database!\n".$error[2];
+    }	
 }
 
 $called_service="Gladslack";

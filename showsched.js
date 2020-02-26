@@ -234,7 +234,7 @@ function addlink() {
         type: 'POST',
         url: 'confsched_service_new.php',
         dataType: 'json',
-        data: "?op=doggin"+makeServiceParam(params)
+        data: "op=doggin"+makeServiceParam(params)
     })
 		.done(data_returned)
 		.fail(function (e) {
@@ -245,9 +245,50 @@ function addlink() {
 		});
 }
 
+function dellink() {
+    let op = "DEFAULT";
+
+		let params = { "id": document.getElementById('kind').value, 
+									 "link": "",
+									 "aux":""};
+
+		var jqxhr = $.ajax({
+        type: 'POST',
+        url: 'confsched_service_new.php',
+        dataType: 'json',
+        data: "op=dellink"+makeServiceParam(params)
+    })
+		.done(data_returned)
+		.fail(function (e) {
+				alert(e.responseText);
+		})
+		.always(function () {
+				//alert( "complete" );
+		});
+}
+
+function updateConf(config)
+{
+    const cfs = Object.entries(config)
+    cfStr="";
+    //for(const [id,cf] of cfs ){
+    for(cf in cfs ){
+        console.log(cf.id,cf.link)
+        cfStr+="<div>";
+        cfStr+="<input id='cf_id_"+cf.id+"' value='"+cf.link+"'>";
+        cfStr+="<input id='cf_kind_"+cf.id+"' value='"+cf.kind+"'>";
+        cfStr+="<input id='cf_aux_"+cf.id+"' value='"+cf.aux+"'>";
+        cfStr+="<button onclick='saveLink("+cf.id+");'>update</buttton>";
+        cfStr+="<button onclick='delLink("+cf.id+");'>delete</buttton>";
+        cfStr+="</div>";
+    }
+    document.getElementById("conf").innerHTML=cfStr;
+}
+
 function data_returned(ret) {
     if (typeof ret.data !== "undefined") {
         service=ret;
+        updateConf(service.confdata);
         showdata();			
 		} else {
         alert("Error receiveing data!");
