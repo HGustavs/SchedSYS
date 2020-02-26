@@ -12,10 +12,11 @@
 //                           Defaults, mouse variables and zoom variables
 //------------------------------------=======############==========----------------------------------------
 
-var service =[];
+var data = [];
 var result = getWeekNumber(new Date());
 var auto_update=null;
 var uidArr=[];
+var confdata=[];
 
 //------------------------------------=======############==========----------------------------------------
 //                                           Mouse events
@@ -56,6 +57,36 @@ function timetopix(tidstr) {
 }
 
 //------------------------------------=======############==========----------------------------------------
+//                                          Service interface
+//------------------------------------=======############==========----------------------------------------
+
+function makeServiceParam(apara)
+{
+		var para="";
+		for (var key in apara) {
+				para+="&"+key+"="+encodeURIComponent(apara[key]);
+		}
+		return para;
+}
+
+function callService(op,serviceurl,params)
+{
+		var jqxhr = $.ajax({
+        type: 'POST',
+        url: serviceurl,
+        dataType: 'json',
+        data: "op="+encodeURIComponent(op)+makeServiceParam(params)
+    })
+		.done(data_returned)
+		.fail(function (e) {
+				alert(e.responseText);
+		})
+		.always(function () {
+				//alert( "complete" );
+		});
+}
+
+//------------------------------------=======############==========----------------------------------------
 //                                          Display Data
 //------------------------------------=======############==========----------------------------------------
 
@@ -68,8 +99,8 @@ function showdata() {
     var currm = today.getMinutes()
     if (currm < 10) currm = "0" + currm;
     //document.getElementById("feedback").innerHTML = currh + ":" + currm;
-    let d=new Date(service.called_service.date);
-    document.getElementById("feedback").innerHTML = d.toLocaleDateString("sv-SE")+" "+d.toLocaleTimeString("sv-SE");
+    //let d=new Date(service.called_service.date);
+    //document.getElementById("feedback").innerHTML = d.toLocaleDateString("sv-SE")+" "+d.toLocaleTimeString("sv-SE");
 
     var currDay = new Date();
     today.setHours(12, 00, 00);
@@ -134,10 +165,9 @@ function showdata() {
 
 
             str += "<div class='lunch' style='top:" + startlunch + "px;height:" + endlunch + "px'></div>";
-
-            if (typeof service.data[datumet] != "undefined") {
-                for (var k = 0; k < service.data[datumet].length; k++) {
-                    var ditem = JSON.parse(service.data[datumet][k]);
+            if (typeof data[datumet] != "undefined") {
+                for (var k = 0; k < data[datumet].length; k++) {
+                    var ditem = JSON.parse(data[datumet][k]);
                     var starty = timetopix(ditem['starttid']) * 30;
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
 									
@@ -196,63 +226,48 @@ function showdata() {
     }
 }
 
-function getData() {
-		service("GET",{ "start_week": -2, "end_week": 2});
-}
-
-function makeServiceParam(apara)
+function getData()
 {
-		var para="";
-		for (var key in apara) {
-				para+="&"+key+"="+encodeURIComponent(apara[key]);
-		}
-		return para;
+		callService("GET","showsched_service_new.php",{ "start_week": -2, "end_week": 2});
 }
 
-function addlink() {
-		service("add",{ "kind": document.getElementById('kind').value, 
-									 "link": document.getElementById('link').value,
-									 "aux":document.getElementById('sign').value}
+//------------------------------------=======############==========----------------------------------------
+//                                           Service calls
+//------------------------------------=======############==========----------------------------------------
+
+function saveLink()
+{
+		callService("ADD","confsched_service_new.php",{ 
+							"id": document.getElementById('confid').value, 
+							"kind": document.getElementById('kind').value, 
+							"link": document.getElementById('link').value,
+							"aux":document.getElementById('sign').value}
 					 );
 }
 
-function addlink() {
 
-}
-
-function clickConf(event)
+function clickConf(inpid)
 {
-		console.log(event.target.class+" "+event.target);
+		if(typeof confdata[inpid] != "undefined"){
+				document.getElementById('link').value=confdata[inpid].link;
+				document.getElementById('kind').value=confdata[inpid].kind;
+				document.getElementById('sign').value=confdata[inpid].aux;
+				document.getElementById('confid').value=confdata[inpid].id;			
+		}
 		event.stopPropagation();
 }
 
 function delLink(param)
 {
-		service(add,{ "id": param});
+		callService("DEL","confsched_service_new.php",{ "id": param});
+		event.stopPropagation();
 }
 
-function service(op,params)
-{
-		var jqxhr = $.ajax({
-        type: 'POST',
-        url: 'confsched_service_new.php',
-        dataType: 'json',
-        data: "op=doggin"+makeServiceParam(params)
-    })
-		.done(data_returned)
-		.fail(function (e) {
-				alert(e.responseText);
-		})
-		.always(function () {
-				//alert( "complete" );
-		});
-}
-
-function updateConf(config)
+function updateConf()
 {
     cfStr="<table>";
-    for(cfkey in config ){
-				var cf=config[cfkey];
+    for(cfkey in confdata ){
+				var cf=confdata[cfkey];
         cfStr+="<tr onclick='clickConf(\""+cf.id+"\")' >";
         cfStr+="<td><span class='delbutto' onclick='delLink("+cf.id+");'>&#x2718;</span></td>";
 				cfStr+="<td><span class='showurl'>"+cf.link+"</span></td>";
@@ -265,11 +280,15 @@ function updateConf(config)
 }
 
 function data_returned(ret) {
-    if (typeof ret.data !== "undefined") {
-        service=ret;
-        updateConf(service.confdata);
-        showdata();			
-		} else {
+    if (typeof ret.data !== "undefined"){
+				data=ret.data;
+				showdata();		
+		}
+    if (typeof ret.confdata !== "undefined"){
+				confdata=ret.confdata;
+				updateConf();
+		}
+    if (typeof ret.confdata === "undefined"&&typeof ret.data === "undefined"){
         alert("Error receiveing data!");
-    }
+		}
 }
