@@ -245,6 +245,15 @@ function saveLink()
 					 );
 }
 
+function addLink()
+{
+		callService("ADD","confsched_service_new.php",{ 
+							"kind": document.getElementById('kind').value, 
+							"link": document.getElementById('link').value,
+							"aux":document.getElementById('sign').value}
+					 );
+}
+
 
 function clickConf(inpid)
 {
@@ -280,6 +289,8 @@ function updateConf()
 }
 
 function data_returned(ret) {
+		if(ret.debug!="NONE!") alert(ret.debug);
+	
     if (typeof ret.data !== "undefined"){
 				data=ret.data;
 				showdata();		

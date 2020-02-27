@@ -27,6 +27,12 @@ $log_db->exec($sql);
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
 
+$pathurl=substr($_SERVER['HTTP_REFERER'],0,strrpos($_SERVER['HTTP_REFERER'],"/"));
+
+/*
+$sql = 'DELETE FROM sched;';
+$log_db->exec($sql);	
+*/
 //-------------------------------------------------------------------------------------------------
 // readjson - function for reading a json from a link and saving it to array incl error correction
 //-------------------------------------------------------------------------------------------------
@@ -47,13 +53,18 @@ function readJson($filename)
 // updateElement - function for updating element using sql ported over from old kiosk
 //----------------------------------------------------------------------------------
 
-function createElement($id,$datum,$element)
+function createElement($id,$datum,$element,$op)
 {
 		global $debug;
 		global $log_db;
 	
+		if($op=="i"){
+			$query = $log_db->prepare('INSERT INTO sched(id,datum,datan) VALUES (:id,:datum,:datan)');
+		}else{
+			$query = $log_db->prepare('UPDATE sched SET datum=:datum,datan=:datan WHERE id=:id');			
+		}
+			
 		$jsonelement = json_encode($element);
-		$query = $log_db->prepare('INSERT INTO sched(id,datum,datan) VALUES (:id,:datum,:datan)');
 		$query->bindParam(':datum', $datum);
 		$query->bindParam(':datan', $jsonelement);
 		$query->bindParam(':id', $id);
@@ -63,33 +74,28 @@ function createElement($id,$datum,$element)
 		}	
 }
 
+function syncData($dataset,$dbarr)
+{
+		// Parse each of the elements in json array and insert into database
+		foreach ($dataset as $element) {
+				$id=$element->id;
+				$datum=$element->startdatum;
+
+				// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
+				if(isset($dbarr[$id])){
+						if($dbarr[$id]!=json_encode($element)){
+										echo "Change detected: ".$id." ".$datum."".$dbarr[$id]."\n";
+										createElement($id,$datum,$element,"u");
+						}
+				}else{
+						createElement($id,$datum,$element,"i");
+						$dbarr[$id]=json_encode($element);
+				}
+		}	
+}
+
 /*--------------------------------------------------------------------------------
 	 Import history
-----------------------------------------------------------------------------------*/	
-
-// Check if no history, if so, read history by default. select count(*) from sched if count is zero import history
-$res=$log_db->query("SELECT COUNT(*) FROM sched;");
-if(!$res) {
-	$error=$res->errorInfo();
-	$debug="Error:\nImporting schedule element from history!\n".$error[2];
-}
-
-$rowcnt=$res->fetchColumn();
-if ($rowcnt==0){
-	$jsondata=readJson('history.json');
-	
-	// Parse each of the elements in json array and insert into database
-	foreach ($jsondata as $element) {
-			$id=$element->id;
-			$datum=$element->startdatum;
-			createElement($id,$datum,$element);
-	}
-}else{
-//		echo "Rows in history:".$rowcnt;
-}
-
-/*--------------------------------------------------------------------------------
-	 Synchronize
 ----------------------------------------------------------------------------------*/	
 
 // Retrieve full config and swizzle into associative array for each config id
@@ -98,46 +104,56 @@ $icals=array();
 $result = $log_db->query('SELECT * FROM conf;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-        $cdbarr[$row['id']]=$row;
-        if($row['kind']=="ical"){
-            array_push($icals,$row["link"]);
-        }
+		$cdbarr[$row['id']]=$row;
 }
 
-// Create array for synchronization of database
+/*--------------------------------------------------------------------------------
+	 Synchronize
+----------------------------------------------------------------------------------*/	
+// Check if no history, if so, read history by default. select count(*) from sched if count is zero import history
+		// Create array for synchronization of database
 $dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-        $dbarr[$row['id']]=$row['datan'];
+				$dbarr[$row['id']]=$row['datan'];
 }
 
-// Foreach ical entry
-// Read data from calendar json
-//$calendar=readJson('ical.json');
-//$calendar=readJson('json_export_ical.php?inurl='.$ical);
+$rowcnt=count($dbarr);
+if ($rowcnt==0){
+		// Import history and other data for first execution
+		foreach($cdbarr as $url){
+					if($url["kind"]=="URL"){
+							$jsondata=readJson($pathurl."/json_export_xml.php?inurl=".$url["link"]);
+					}else{
+							$jsondata=readJson($pathurl."http://localhost/SchedSYS/json_export_ical.php?inurl=".$url["link"]);
+					}
+					// Parse each of the elements in json array and insert into database
+					foreach ($jsondata as $element) {
+							$id=$element->id;
+							$datum=$element->startdatum;
+							if(!isset($dbarr[$id])){
+									createElement($id,$datum,$element,"i");
+									$dbarr[$id]=json_encode($element);
+							}
+					}
+		}
+} else {
+		foreach($cdbarr as $url){
+			
+				if(strlen($url["link"])<=6 && $url["kind"]=="URL"){
+						$jsondata=readJson($pathurl."/json_export_xml.php?inurl=".$url["link"]);
+						syncData($jsondata,$dbarr);
+				}
+		}
+}
 
 // Synchronize data from calendar with database
-foreach($icals as $ical){
-
-    // Read data from calendar json
-    //$calendar=readJson('ical.json');
-    $calendar=readJson('json_export_ical.php?inurl='.$ical);
-
-    // Synchronize data from calendar with database
-    foreach ($calendar as $element) {
-            $id=$element->id;
-            $datum=$element->startdatum;
-
-            // If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
-            if(isset($dbarr[$id])){
-                    if($dbarr[$id]!=json_encode($element)){
-                            echo "Change detected: ".$id." ".$datum."\n";
-                            // modifElement($id,$datum,$element);
-                    }
-            }else{
-                    createElement($id,$datum,$element);
-            }
+foreach($cdbarr as $ical){
+    if($ical['kind']=="ICAL"){
+				// Read data from calendar json
+				$calendar=readJson($pathurl."/json_export_ical.php?inurl=".$ical["link"]);
+				syncData($calendar,$dbarr);
     }
 }
 // End foreach ical

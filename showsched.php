@@ -217,10 +217,10 @@
             <div>
                 <fieldset>
                     <legend>Config</legend>
-										<div><label>Link:</label><input type="hidden" value="kurgan" id="confid"><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
+										<div><label>Link:</label><input type="hidden" value="-1" id="confid"><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
 										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
 										<div><label>Sign:</label><input type="text" placeholder="BROM" id="sign" value="Link"></div>
-										<div><input type="button" value="add" onclick="addlink();"><input type="button" value="save" onclick="savelink();"></div>
+										<div><input type="button" value="add" onclick="addLink();" ><input type="button" value="save" onclick="saveLink();"></div>
 								</fieldset>
 								<div id="tab"></div>
             </div>
