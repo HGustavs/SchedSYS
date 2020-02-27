@@ -208,9 +208,6 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 
 <body onload="getData();">
     <div class='wrkap'>
-			<?php
-				print_r($_SESSION);
-			?>
         MAKE IT HAPPEN <span id='feedback'></span><br>
         <hr><br>
         <div id="datedisp">
