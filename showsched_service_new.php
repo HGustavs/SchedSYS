@@ -1,5 +1,7 @@
 <?php			
 
+require "config.php";
+
 // ------------------------------------------------------------------------------------------------------------
 // -----------=============######## Second version Kiosk System with JSON/ICAL ########=============-----------
 // ------------------------------------------------------------------------------------------------------------
@@ -33,6 +35,7 @@ $pathurl=substr($_SERVER['HTTP_REFERER'],0,strrpos($_SERVER['HTTP_REFERER'],"/")
 $sql = 'DELETE FROM sched;';
 $log_db->exec($sql);	
 */
+
 //-------------------------------------------------------------------------------------------------
 // readjson - function for reading a json from a link and saving it to array incl error correction
 //-------------------------------------------------------------------------------------------------
@@ -126,7 +129,7 @@ if ($rowcnt==0){
 					if($url["kind"]=="URL"){
 							$jsondata=readJson($pathurl."/json_export_xml.php?inurl=".$url["link"]);
 					}else{
-							$jsondata=readJson($pathurl."http://localhost/SchedSYS/json_export_ical.php?inurl=".$url["link"]);
+							$jsondata=readJson($pathurl."/json_export_ical.php?inurl=".$url["link"]);
 					}
 					// Parse each of the elements in json array and insert into database
 					foreach ($jsondata as $element) {

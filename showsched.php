@@ -1,6 +1,11 @@
+<?php		
+	
+require "config.php";
+session_start();
+if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
+?>
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
@@ -203,6 +208,9 @@
 
 <body onload="getData();">
     <div class='wrkap'>
+			<?php
+				print_r($_SESSION);
+			?>
         MAKE IT HAPPEN <span id='feedback'></span><br>
         <hr><br>
         <div id="datedisp">
@@ -214,16 +222,23 @@
    <div id="options-pane" class="hide-options-pane">
         <div id="options-pane-button" onclick="fab_action();"><span id='optmarker'>&#9660;Options</span></div>
         <div id="options-pane-content" >
-            <div>
-                <fieldset>
-                    <legend>Config</legend>
-										<div><label>Link:</label><input type="hidden" value="-1" id="confid"><input type="text" placeholder="S_BROM" id="link" value="Link"></div>
-										<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>
-										<div><label>Sign:</label><input type="text" placeholder="BROM" id="sign" value="Link"></div>
-										<div><input type="button" value="add" onclick="addLink();" ><input type="button" value="save" onclick="saveLink();"></div>
-								</fieldset>
-								<div id="tab"></div>
-            </div>
+						<?php
+								if($_SESSION['adminpass']==adminpass){
+										echo "<div>";
+										echo "<fieldset>";
+										echo "<legend>Config</legend>";
+										echo "<div><label>Link:</label><input type='hidden' value='-1' id='confid'><input type='text' placeholder='S_BROM' id='link' value='Link'></div>";
+										echo "<div><label>Kind:</label><select id='kind'><option>ICAL</option><option>URL</option></select></div>";
+										echo "<div><label>Sign:</label><input type='text' placeholder='BROM' id='sign' value='Link'></div>";
+										echo "<div><input type='button' value='add' onclick='addLink();' ><input type='button' value='save' onclick='saveLink();'></div>";
+										echo "</fieldset>";
+										echo "<div id='tab'></div>";
+										echo "</div>";
+								}else{
+										echo "<form method='post' action='adminlogin.php'><div><label>Adminpass:</label><input type='password' placeholder='hint' name='adminpass' value='Link'></div><input type='submit' value='OK'></form>";
+								}
+					  ?>
+
         </div>
     </div>
 
