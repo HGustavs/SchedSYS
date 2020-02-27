@@ -2,7 +2,7 @@
 		session_start();
 		require "config.php";
 
-		if(!isset(POST['adminpass'])) $_POST['adminpass']="UNK";
+		if(!isset($_POST['adminpass'])) $_POST['adminpass']="UNK";
 		if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 
 		if($_POST['adminpass']==adminpass){
