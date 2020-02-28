@@ -33,6 +33,12 @@ function fab_action()
     }    
 }
 
+function clickbookable(element)
+{
+		document.getElementById('optmarker').innerHTML="&#x1f4a9;Options";
+		document.getElementById("options-pane").className="show-options-pane";
+}
+
 //------------------------------------=======############==========----------------------------------------
 //                                           Date Handling
 //------------------------------------=======############==========----------------------------------------
@@ -197,7 +203,7 @@ function showdata() {
 										}
 										str+="' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'";
 										if(benamning=="Exjobbsmöte"){
-												str+=" onclick='alert(event.target.parentElement.id)' ";		
+												str+=" onclick='clickbookable(event.target)' ";		
 										}
 										str+=">";
 										str+="<div class='flexcontainer'>";
