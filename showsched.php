@@ -236,7 +236,7 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
         <div id="options-pane-content" >
 						<?php
 								if($_SESSION['adminpass']==adminpass){
-										echo "<div>";
+										echo "<div id='adminpane'>";
 										echo "<fieldset>";
 										echo "<legend>Config</legend>";
 										echo "<div><label>Link:</label><input type='hidden' value='-1' id='confid'><input type='text' placeholder='S_BROM' id='link' value='Link'></div>";
@@ -250,7 +250,10 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 										echo "<form method='post' action='adminlogin.php'><div><label>Adminpass:</label><input type='password' placeholder='hint' name='adminpass' value='Link'></div><input type='submit' value='OK'></form>";
 								}
 					  ?>
-
+						<div id="bookingpane" style='display:none;'>
+								<div><input type='hidden' value='-1' id='bookid'><label>Namn:</label><input type='text' placeholder='Greger' id='boknamn'></div>
+								<div><input type='button' value='save' onclick='saveBokning();'></div>
+						</div>
         </div>
     </div>
 

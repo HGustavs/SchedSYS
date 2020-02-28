@@ -27,16 +27,21 @@ function fab_action()
     if(document.getElementById("options-pane").className=="show-options-pane"){
 				document.getElementById('optmarker').innerHTML="&#9660;Options";
         document.getElementById("options-pane").className="hide-options-pane";
+				document.getElementById("bokningpane").style.display="block";			
     }else{
 				document.getElementById('optmarker').innerHTML="&#x1f4a9;Options";
 				document.getElementById("options-pane").className="show-options-pane";
-    }    
+				document.getElementById("adminpane").style.display="block";
+		}    
 }
 
 function clickbookable(element)
 {
 		document.getElementById('optmarker').innerHTML="&#x1f4a9;Options";
 		document.getElementById("options-pane").className="show-options-pane";
+		document.getElementById("bookingpane").style.display="block";
+		document.getElementById("adminpane").style.display="none";	
+		alert(document.getElementById("bookingpane").style.display);
 }
 
 //------------------------------------=======############==========----------------------------------------
