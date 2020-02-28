@@ -26,7 +26,7 @@ function getOP($name)
 		else return "UNK";
 }
 
-
+$op=getOP('op');
 
 if($_SESSION['adminpass']==adminpass){
 		//------------------------------------==========############==========----------------------------------------
@@ -37,7 +37,6 @@ if($_SESSION['adminpass']==adminpass){
 		$kind=getOP('kind');
 		$aux=getOP('aux');
 		$id=getOP('id');
-		$op=getOP('op');
 
 		// Updated database! - id is varchar 32 so we can store uuids of different kinds if need be
 		// New feature: Each row contains one element not one day - this is so we can synch more effectively using ids
@@ -114,21 +113,20 @@ if($_SESSION['adminpass']==adminpass){
 				"called_service" => $called_service
 		);
 
-		header('Content-Type: application/json');
-		echo json_encode($ret);
+}
 
-}else{
 		if($op=="MEET"){
 				$mid=getOP('meetid');
 				$mname=getOP('meetname');
 
 				$query = $log_db->prepare('SELECT * FROM sched WHERE id=:id');			
 				$query->bindParam(':id', $mid);
+				$query->execute();
 				$rows = $query->fetchAll();
 				foreach ($rows as $row) {
 						$element=json_decode($row['datan']);
 				}
-				$element['kommentar']=$mname;
+				$element->kommentar=$mname;
 				$jsonelement = json_encode($element);
 				$query = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
 				$query->bindParam(':datan', $jsonelement);
@@ -137,17 +135,12 @@ if($_SESSION['adminpass']==adminpass){
 							$error=$query->errorInfo();
 							$debug="Error:\nError writing to history!\n".$error[2];
 				}			
+				$ret = array(
+						"debug" => $debug,
+						"called_service" => $called_service
+				);		
 		}
-
-		$ret = array(
-				"debug" => $debug,
-				"confdata" => $cdbarr,
-				"called_service" => $called_service
-		);
 
 		header('Content-Type: application/json');
 		echo json_encode($ret);
-
-}
-
 ?>
