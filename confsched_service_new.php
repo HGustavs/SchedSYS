@@ -3,6 +3,8 @@
 session_start();
 require "config.php";
 if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
+date_default_timezone_set('Europe/Stockholm');
+$debug="NONE!";
 
 // ------------------------------------------------------------------------------------------------------------
 // -----------=============######## Second version Kiosk System with JSON/ICAL ########=============-----------
@@ -25,13 +27,11 @@ function getOP($name)
 }
 
 
+
 if($_SESSION['adminpass']==adminpass){
 		//------------------------------------==========############==========----------------------------------------
 		//                                  Startup Create Database & Read Config
 		//------------------------------------==========############==========----------------------------------------
-
-		date_default_timezone_set('Europe/Stockholm');
-		$debug="NONE!";
 
 		$link=getOP('link');
 		$kind=getOP('kind');
@@ -99,7 +99,7 @@ if($_SESSION['adminpass']==adminpass){
 		//------------------------------------==========############==========----------------------------------------
 		//                                     Re-Read synchronized database
 		//------------------------------------==========############==========----------------------------------------
-		// Retrieve config from database
+		// Retrieve config from databasemet
 		$cdbarr=Array();
 		$result = $log_db->query('SELECT * FROM conf;');
 		$rows = $result->fetchAll();
@@ -108,6 +108,37 @@ if($_SESSION['adminpass']==adminpass){
 		}
 
 		$called_service="Gladslack";
+		$ret = array(
+				"debug" => $debug,
+				"confdata" => $cdbarr,
+				"called_service" => $called_service
+		);
+
+		header('Content-Type: application/json');
+		echo json_encode($ret);
+
+}else{
+		if($op=="MEET"){
+				$mid=getOP('meetid');
+				$mname=getOP('meetname');
+
+				$query = $log_db->prepare('SELECT * FROM sched WHERE id=:id');			
+				$query->bindParam(':id', $mid);
+				$rows = $query->fetchAll();
+				foreach ($rows as $row) {
+						$element=json_decode($row['datan']);
+				}
+				$element['kommentar']=$mname;
+				$jsonelement = json_encode($element);
+				$query = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
+				$query->bindParam(':datan', $jsonelement);
+				$query->bindParam(':id', $mid);
+				if(!$query->execute()) {
+							$error=$query->errorInfo();
+							$debug="Error:\nError writing to history!\n".$error[2];
+				}			
+		}
+
 		$ret = array(
 				"debug" => $debug,
 				"confdata" => $cdbarr,

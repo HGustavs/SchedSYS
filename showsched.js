@@ -35,13 +35,25 @@ function fab_action()
 		}    
 }
 
-function clickbookable(element)
+function clickbookable(element,namn)
 {
 		document.getElementById('optmarker').innerHTML="&#x1f4a9;Options";
 		document.getElementById("options-pane").className="show-options-pane";
 		document.getElementById("bookingpane").style.display="block";
 		document.getElementById("adminpane").style.display="none";	
-		alert(document.getElementById("bookingpane").style.display);
+		
+		document.getElementById("boknamn").value=namn;
+		document.getElementById("bokid").value=element.id;
+		console.log(element);
+}
+
+function saveBooking()
+{
+		callService("MEET","confsched_service_new.php",{ 
+									"meetid": document.getElementById("bokid").value, 
+									"meetname": document.getElementById("boknamn").value 
+		});
+		callService("GET","showsched_service_new.php",{ "start_week": -2, "end_week": 2});
 }
 
 //------------------------------------=======############==========----------------------------------------
@@ -191,6 +203,9 @@ function showdata() {
 										var benamning = ditem['kursben'];
 										if(typeof benamning == "undefined") benamning="";
 									
+										var kommentar = ditem['kommentar'];
+										if(typeof kommentar == "undefined") kommentar="";
+									
                     colno = belist.indexOf(benamning);
                     if (colno == -1) {
                         if (benamning.indexOf("andl") == -1) belist.push(benamning);
@@ -202,28 +217,29 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-                    str += "<div class='timeslot";
+                    str += "<div ";
+										str += "id='"+ditem['id']+"' class='timeslot";
 										if(benamning=="Exjobbsmöte"){
 												str+=" bokbar";		
 										}
 										str+="' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'";
 										if(benamning=="Exjobbsmöte"){
-												str+=" onclick='clickbookable(event.target)' ";		
+												str+=" onclick='clickbookable(event.target,\""+kommentar+"\")' ";		
 										}
 										str+=">";
 										str+="<div class='flexcontainer'>";
                     str += "<div>"+benamning+"</div>";
-										if(mdiff<=30&&ditem['Kommentar'] != ""){
+										if(mdiff<=30&&kommentar != ""){
 													// Shorter than 30 min and we have a comment!
-													str+="<div>"+ditem['kommentar']+"</div>";
+													str+="<div>"+kommentar+"</div>";
 										}
 										str+="</div>";
                     str += "<br>";
                     str += ditem['lokal'];
-                    if (ditem['Kommentar'] != "") {
+                    if (kommentar != "") {
                         str += "<br>";
                         str += "<span style='font-style:italic;font-weight:400'>";
-                        str += ditem['kommentar'];
+                        str += kommentar;
                         str += "</span>";
                     }
                     if (typeof ditem['Uppdaterad']!=="undefined") {

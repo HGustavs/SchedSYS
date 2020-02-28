@@ -215,6 +215,7 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 				.flexcontainer {
 					 display: flex;
 					 flex-direction: row;
+					 pointer-events: none;
 				}			
 			
     </style>
@@ -251,8 +252,8 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 								}
 					  ?>
 						<div id="bookingpane" style='display:none;'>
-								<div><input type='hidden' value='-1' id='bookid'><label>Namn:</label><input type='text' placeholder='Greger' id='boknamn'></div>
-								<div><input type='button' value='save' onclick='saveBokning();'></div>
+								<div><input type='hidden' value='-1' id='bokid'><label>Namn:</label><input type='text' placeholder='Greger' id='boknamn'></div>
+								<div><input type='button' value='save' onclick='saveBooking();'></div>
 						</div>
         </div>
     </div>
