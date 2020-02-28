@@ -202,6 +202,21 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 						background: #ddc880;
 				}			
 			
+				.bokbar{
+						background-color:#6d6;
+				}
+			
+				.bokbar:hover{
+						border:1px solid orange;
+						background-color:#8f8;
+						box-sizing: border-box;
+				}			
+			
+				.flexcontainer {
+					 display: flex;
+					 flex-direction: row;
+				}			
+			
     </style>
 
 </head>

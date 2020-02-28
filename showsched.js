@@ -86,6 +86,11 @@ function callService(op,serviceurl,params)
 		});
 }
 
+function mindif(tida,tidb)
+{
+		return ((parseInt(tidb.substr(0,2))*60)+(parseInt(tidb.substr(3,2))))-((parseInt(tida.substr(0,2))*60)+(parseInt(tida.substr(3,2))));
+}
+
 //------------------------------------=======############==========----------------------------------------
 //                                          Display Data
 //------------------------------------=======############==========----------------------------------------
@@ -133,7 +138,6 @@ function showdata() {
             str += "<tr>";
         }
 
-
         str += "<td>";
         str += "<div class='weekno' >";
         // End of year handling
@@ -171,6 +175,8 @@ function showdata() {
                     var starty = timetopix(ditem['starttid']) * 30;
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
 									
+										var mdiff=(mindif(ditem['starttid'],ditem['sluttid']));
+									
 										var benamning = ditem['kursben'];
 										if(typeof benamning == "undefined") benamning="";
 									
@@ -185,8 +191,22 @@ function showdata() {
                         colnamn = collist[colno];
                     }
 
-                    str += "<div class='timeslot' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'>";
-                    str += benamning;
+                    str += "<div class='timeslot";
+										if(benamning=="Exjobbsmöte"){
+												str+=" bokbar";		
+										}
+										str+="' style='background:" + colnamn + ";top:" + starty + "px;height:" + endy + "px'";
+										if(benamning=="Exjobbsmöte"){
+												str+=" onclick='alert(event.target.parentElement.id)' ";		
+										}
+										str+=">";
+										str+="<div class='flexcontainer'>";
+                    str += "<div>"+benamning+"</div>";
+										if(mdiff<=30&&ditem['Kommentar'] != ""){
+													// Shorter than 30 min and we have a comment!
+													str+="<div>"+ditem['kommentar']+"</div>";
+										}
+										str+="</div>";
                     str += "<br>";
                     str += ditem['lokal'];
                     if (ditem['Kommentar'] != "") {
