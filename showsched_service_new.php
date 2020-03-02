@@ -1,4 +1,4 @@
-<?php
+<?php			
 
 require "config.php";
 
@@ -13,11 +13,11 @@ require "config.php";
 //-------------------------------------------------------------------------------------------------------------
 
 date_default_timezone_set('Europe/Stockholm');
-$debug = "NONE!";
-
+$debug="NONE!";
+	
 /*--------------------------------------------------------------------------------
 	 Create Database
-----------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------*/	
 
 // Updated database! - id is varchar 32 so we can store uuids of different kinds if need be
 // New feature: Each row contains one element not one day - this is so we can synch more effectively using ids
@@ -25,11 +25,11 @@ $log_db = new PDO('sqlite:./scheduledata.db');
 $log_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $log_db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varchar(10), datan TEXT);';
-$log_db->exec($sql);
+$log_db->exec($sql);	
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
-$log_db->exec($sql);
+$log_db->exec($sql);	
 
-$pathurl = substr($_SERVER['HTTP_REFERER'], 0, strrpos($_SERVER['HTTP_REFERER'], "/"));
+$pathurl=substr($_SERVER['HTTP_REFERER'],0,strrpos($_SERVER['HTTP_REFERER'],"/"));
 
 /*
 $sql = 'DELETE FROM sched;';
@@ -42,161 +42,150 @@ $log_db->exec($sql);
 
 function readJson($filename)
 {
-	global $debug;
+		global $debug;
 
-	$jsontext = file_get_contents($filename);
-	$jsondata = json_decode($jsontext);
-	if (json_last_error() != JSON_ERROR_NONE) {
-		$debug = "Error:\nJson error for import!";
-	}
-	return $jsondata;
+		$jsontext = file_get_contents($filename); 
+		$jsondata = json_decode($jsontext);
+		if(json_last_error()!=JSON_ERROR_NONE){
+				$debug="Error:\nJson error for import!";
+		}	
+		return $jsondata;
 }
 
 //----------------------------------------------------------------------------------
 // updateElement - function for updating element using sql ported over from old kiosk
 //----------------------------------------------------------------------------------
 
-function createElement($id, $datum, $element, $op)
+function createElement($id,$datum,$element,$op)
 {
-	global $debug;
-	global $log_db;
-
-	if ($op == "i") {
-		$query = $log_db->prepare('INSERT INTO sched(id,datum,datan) VALUES (:id,:datum,:datan)');
-	} else {
-		$query = $log_db->prepare('UPDATE sched SET datum=:datum,datan=:datan WHERE id=:id');
-	}
-
-	$jsonelement = json_encode($element);
-	$query->bindParam(':datum', $datum);
-	$query->bindParam(':datan', $jsonelement);
-	$query->bindParam(':id', $id);
-	if (!$query->execute()) {
-		$error = $query->errorInfo();
-		$debug = "Error:\nImporting schedule element from history!\n" . $error[2];
-	}
+		global $debug;
+		global $log_db;
+	
+		if($op=="i"){
+			$query = $log_db->prepare('INSERT INTO sched(id,datum,datan) VALUES (:id,:datum,:datan)');
+		}else{
+			$query = $log_db->prepare('UPDATE sched SET datum=:datum,datan=:datan WHERE id=:id');			
+		}
+			
+		$jsonelement = json_encode($element);
+		$query->bindParam(':datum', $datum);
+		$query->bindParam(':datan', $jsonelement);
+		$query->bindParam(':id', $id);
+		if(!$query->execute()) {
+			$error=$query->errorInfo();
+			$debug="Error:\nImporting schedule element from history!\n".$error[2];
+		}	
 }
 
-function syncData($dataset, $dbarr)
+function syncData($dataset,$dbarr)
 {
-	global $debug;
-	// Parse each of the elements in json array and insert into database
-	foreach ($dataset as $element) {
-		$id = $element->id;
-		$datum = $element->startdatum;
+		// Parse each of the elements in json array and insert into database
+		foreach ($dataset as $element) {
+				$id=$element->id;
+				$datum=$element->startdatum;
 
-		// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
-		if (isset($dbarr[$id])) {
-			if ($dbarr[$id] != json_encode($element)) {
-				//$debug="Change detected: " . $id . " " . $datum . "" . $dbarr[$id] . "\n";
-				
-				// see if only comment has changed -- Not pretty!
-				$tmp_element=$element;
-				$tmp_db_element=json_decode($dbarr[$id]);
-				$tmp_element->kommentar=$tmp_db_element->kommentar;
-
-				//$debug.="\n\nSee if only comment differ: " . ($dbarr[$id] != json_encode($tmp_element)) . "\n\n" . json_encode($tmp_db_element). "\n\n" . json_encode($tmp_element) . "!!\n\n" . $dbarr[$id] . "!!"."\n";
-				// If more than comment has changed ... do update
-				if ($dbarr[$id] != json_encode($tmp_element)){
-					createElement($id, $datum, $element, "u");	
+				// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
+				if(isset($dbarr[$id])){
+						if($dbarr[$id]!=json_encode($element)){
+										echo "Change detected: ".$id." ".$datum."".$dbarr[$id]."\n";
+										createElement($id,$datum,$element,"u");
+						}
+				}else{
+						createElement($id,$datum,$element,"i");
+						$dbarr[$id]=json_encode($element);
 				}
-				
-			}
-		} else {
-			createElement($id, $datum, $element, "i");
-			$dbarr[$id] = json_encode($element);
-		}
-	}
+		}	
 }
 
 /*--------------------------------------------------------------------------------
 	 Import history
-----------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------*/	
 
 // Retrieve full config and swizzle into associative array for each config id
-$cdbarr = array();
-$icals = array();
+$cdbarr=Array();
+$icals=array();
 $result = $log_db->query('SELECT * FROM conf;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-	$cdbarr[$row['id']] = $row;
+		$cdbarr[$row['id']]=$row;
 }
 
 /*--------------------------------------------------------------------------------
 	 Synchronize
-----------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------*/	
 // Check if no history, if so, read history by default. select count(*) from sched if count is zero import history
-// Create array for synchronization of database
-$dbarr = array();
+		// Create array for synchronization of database
+$dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-	$dbarr[$row['id']] = $row['datan'];
+				$dbarr[$row['id']]=$row['datan'];
 }
 
-$rowcnt = count($dbarr);
-if ($rowcnt == 0) {
-	// Import history and other data for first execution
-	foreach ($cdbarr as $url) {
-		if ($url["kind"] == "URL") {
-			$jsondata = readJson($pathurl . "/json_export_xml.php?inurl=" . $url["link"]);
-		} else {
-			$jsondata = readJson($pathurl . "/json_export_ical.php?inurl=" . $url["link"]);
+$rowcnt=count($dbarr);
+if ($rowcnt==0){
+		// Import history and other data for first execution
+		foreach($cdbarr as $url){
+					if($url["kind"]=="URL"){
+							$jsondata=readJson($pathurl."/json_export_xml.php?inurl=".$url["link"]);
+					}else{
+							$jsondata=readJson($pathurl."/json_export_ical.php?inurl=".$url["link"]);
+					}
+					// Parse each of the elements in json array and insert into database
+					foreach ($jsondata as $element) {
+							$id=$element->id;
+							$datum=$element->startdatum;
+							if(!isset($dbarr[$id])){
+									createElement($id,$datum,$element,"i");
+									$dbarr[$id]=json_encode($element);
+							}
+					}
 		}
-		// Parse each of the elements in json array and insert into database
-		foreach ($jsondata as $element) {
-			$id = $element->id;
-			$datum = $element->startdatum;
-			if (!isset($dbarr[$id])) {
-				createElement($id, $datum, $element, "i");
-				$dbarr[$id] = json_encode($element);
-			}
-		}
-	}
 } else {
-	foreach ($cdbarr as $url) {
-
-		if (strlen($url["link"]) <= 6 && $url["kind"] == "URL") {
-			$jsondata = readJson($pathurl . "/json_export_xml.php?inurl=" . $url["link"]);
-			syncData($jsondata, $dbarr);
+		foreach($cdbarr as $url){
+			
+				if(strlen($url["link"])<=6 && $url["kind"]=="URL"){
+						$jsondata=readJson($pathurl."/json_export_xml.php?inurl=".$url["link"]);
+						syncData($jsondata,$dbarr);
+				}
 		}
-	}
 }
 
 // Synchronize data from calendar with database
-foreach ($cdbarr as $ical) {
-	if ($ical['kind'] == "ICAL") {
-		// Read data from calendar json
-		$calendar = readJson($pathurl . "/json_export_ical.php?inurl=" . $ical["link"]);
-		syncData($calendar, $dbarr);
-	}
+foreach($cdbarr as $ical){
+    if($ical['kind']=="ICAL"){
+				// Read data from calendar json
+				$calendar=readJson($pathurl."/json_export_ical.php?inurl=".$ical["link"]);
+				syncData($calendar,$dbarr);
+    }
 }
 // End foreach ical
 
 /*--------------------------------------------------------------------------------
 	 Re-Read synchronized database
-----------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------*/	
 
 // Retrieve full database and swizzle into associative array for each day
-$dbarr = array();
+$dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
-	if (isset($dbarr[$row['datum']])) {
-		array_push($dbarr[$row['datum']], $row['datan']);
-	} else {
-		$dbarr[$row['datum']] = array();
-		array_push($dbarr[$row['datum']], $row['datan']);
-	}
+		if(isset($dbarr[$row['datum']])){
+				array_push($dbarr[$row['datum']], $row['datan']);
+		}else{
+				$dbarr[$row['datum']]=Array();
+				array_push($dbarr[$row['datum']], $row['datan']);
+		}
 }
 
-$called_service = "Gladpack";
+$called_service="Gladpack";
 $ret = array(
-	"debug" => $debug,
-	"data" => $dbarr,
-	"confdata" => $cdbarr,
-	"called_service" => $called_service
+    "debug" => $debug,
+    "data" => $dbarr,
+    "confdata" => $cdbarr,	
+    "called_service" => $called_service
 );
 
 header('Content-Type: application/json');
 echo json_encode($ret);
+?>
