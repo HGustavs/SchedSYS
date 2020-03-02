@@ -83,13 +83,19 @@ function syncData($dataset,$dbarr)
 		foreach ($dataset as $element) {
 				$id=$element->id;
 				$datum=$element->startdatum;
-
 				// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
 				if(isset($dbarr[$id])){
-						if($dbarr[$id]!=json_encode($element)){
-										echo "Change detected: ".$id." ".$datum."".$dbarr[$id]."\n";
-										createElement($id,$datum,$element,"u");
-						}
+
+					// Clever way to check if only comment has changed if so, keep unmodified
+					$tmp_element=$element;
+					$tmp_db_element=json_decode($dbarr[$id]);
+					$tmp_element->kommentar=$tmp_db_element->kommentar;
+
+					//$debug.="\n\nSee if only comment differ: " . ($dbarr[$id] != json_encode($tmp_element)) . "\n\n" . json_encode($tmp_db_element). "\n\n" . json_encode($tmp_element) . "!!\n\n" . $dbarr[$id] . "!!"."\n";
+					// If more than comment has changed ... do update
+					if ($dbarr[$id] != json_encode($tmp_element)){
+						createElement($id, $datum, $element, "u");	
+					}
 				}else{
 						createElement($id,$datum,$element,"i");
 						$dbarr[$id]=json_encode($element);
