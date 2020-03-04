@@ -231,7 +231,7 @@ function showdata() {
                     str += "<div>"+benamning+"</div>";
 										if(mdiff<=30&&kommentar != ""){
 													// Shorter than 30 min and we have a comment!
-													str += "<div style='margin-left:4px;font-weight:100;'>" + kommentar + "</div>";
+													str += "<div style='font-weight:100;'>" + kommentar + "</div>";
 										}
 										str+="</div>";
                     str += "<br>";

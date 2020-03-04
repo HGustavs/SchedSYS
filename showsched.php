@@ -133,10 +133,11 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
             left: 0px;
             overflow: hidden;
             position: absolute;
-            width: 180px;
+            width: 176px;
             background-color: #def;
             color: black;
             font-size: 12px;
+            padding:0px 2px;
         }
 
         .lunch {
@@ -215,6 +216,7 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 				.flexcontainer {
 					 display: flex;
 					 flex-direction: row;
+                     justify-content: space-between;
 					 pointer-events: none;
 				}			
 			
