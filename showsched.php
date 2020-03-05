@@ -247,10 +247,18 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 										echo "<div><label>Sign:</label><input type='text' placeholder='BROM' id='sign' value='Link'></div>";
 										echo "<div><input type='button' value='add' onclick='addLink();' ><input type='button' value='save' onclick='saveLink();'></div>";
 										echo "</fieldset>";
+										echo "<fieldset>";
 										echo "<div id='tab'></div>";
+										echo "</fieldset>";
 										echo "</div>";
 								}else{
-										echo "<form method='post' action='adminlogin.php'><div><label>Adminpass:</label><input type='password' placeholder='hint' name='adminpass' value='Link'></div><input type='submit' value='OK'></form>";
+										echo "<form method='post' action='adminlogin.php'>";
+										echo "<fieldset>";
+										echo "<legend>Login</legend>";
+										echo "<div><label>Adminpass:</label><input type='password' placeholder='hint' name='adminpass' value='Link'></div>";
+										echo "</fieldset>";
+										echo "<input type='submit' value='OK'>";
+										echo "</form>";
 								}
 					  ?>
 						<div id="bookingpane" style='display:none;'>
