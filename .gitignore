@@ -7,3 +7,5 @@ config.php
 
 *.bak
 *.json
+
+signatures.txt
