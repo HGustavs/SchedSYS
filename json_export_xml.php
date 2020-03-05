@@ -10,6 +10,28 @@
 //       c(")(")  ∴ 
 //-------------------------------------------------------------------------------------------------------------
 
+$names=array();
+
+//-------------------------------------------------------------------------------------------------
+// getNames - function for reading a txt files and return name -> sign array
+//-------------------------------------------------------------------------------------------------
+
+function getNames()
+{
+		global $debug;
+
+		$url=$_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['HTTP_HOST'] . explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+		$url=trim(substr($url,0,strrpos($url,'/')+1));
+		$url.='json_export_sign.php';
+		$jsontext = file_get_contents($url);
+		$jsondata = json_decode($jsontext,true);
+		if(json_last_error()!=JSON_ERROR_NONE){
+				$debug="Error:\nJson error for import!";
+		}	
+		return $jsondata;
+}
+
+
 function isprog($str)
 {
 		if (strlen($str)==11&&is_numeric(substr($str,-6,2))) return true;
@@ -40,8 +62,10 @@ function islokal($str)
 
 function issign($str)
 {
+		global $debug;	
+		global $names;
 		$capstr=preg_replace("/[^A-Z]/","",$str);
-	
+		if (isset($names[$str])){return true;}
 		if ((strlen($capstr)==4)&&(strcmp($str,$capstr)==0)) return true;
 		if ((strcmp($str,"GTS")==0)||(strcmp($str,"Gäst")==0)||(strcmp($str,"Alice Carlström")==0)||(strcmp($str,"Admir Sahman")==0)) return true;
 		return false;
@@ -49,6 +73,8 @@ function issign($str)
 
 $oentries=Array();
 $oentry=Array();
+
+$names=getNames();
 
 // Signature or cached history
 if(strlen($_GET['inurl'])==6){
@@ -78,6 +104,14 @@ foreach ($entries->childNodes as $entry){
 						}else if($gentry->tagName=="updated"){							
 								$oentry['updated']=$gentry->nodeValue;
 						}else if($gentry->tagName=="summary"){
+
+								// Första kan vara följande
+								// Är första INTE program/signatur/grupp så är det förmodligen 
+								// PROGRAM
+								// SIGNATUR
+								// GRUPP
+								// ANNAT?
+
 								$inneritems=explode("§§",$gentry->nodeValue);
 								$sign=Array();
 								$prog=Array();

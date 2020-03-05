@@ -31,10 +31,24 @@ $log_db->exec($sql);
 
 $pathurl=substr($_SERVER['HTTP_REFERER'],0,strrpos($_SERVER['HTTP_REFERER'],"/"));
 
-/*
-$sql = 'DELETE FROM sched;';
-$log_db->exec($sql);	
-*/
+//-------------------------------------------------------------------------------------------------
+// getNames - function for reading a txt files and return name -> sign array
+//-------------------------------------------------------------------------------------------------
+
+function getNames()
+{
+		global $debug;
+
+		$url=$_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['HTTP_HOST'] . explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+		$url=trim(substr($url,0,strrpos($url,'/')+1));
+		$url.='json_export_sign.php';
+		$jsontext = file_get_contents($url);
+		$jsondata = json_decode($jsontext);
+		if(json_last_error()!=JSON_ERROR_NONE){
+				$debug="Error:\nJson error for import!";
+		}	
+		return $jsondata;
+}
 
 //-------------------------------------------------------------------------------------------------
 // readjson - function for reading a json from a link and saving it to array incl error correction
