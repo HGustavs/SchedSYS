@@ -105,17 +105,18 @@ foreach ($entries->childNodes as $entry){
 								$oentry['updated']=$gentry->nodeValue;
 						}else if($gentry->tagName=="summary"){
 
-								// Första kan vara följande
-								// Är första INTE program/signatur/grupp så är det förmodligen 
-								// PROGRAM
-								// SIGNATUR
-								// GRUPP
-								// ANNAT?
-
 								$inneritems=explode("§§",$gentry->nodeValue);
 								$sign=Array();
 								$prog=Array();
 								$spec="";
+
+								if(issign(trim($inneritems[0]))){
+										// Already a signature so we do nothing
+								}else{
+										$oentry['kursben']=substr($inneritems[0],0,strrpos($inneritems[0]," "));
+										$inneritems[0]=substr($inneritems[0],strrpos($inneritems[0]," ")+1);
+								}
+							
 								foreach($inneritems as $key=>$inneritem){
 										$inneritem=trim($inneritem);
 										if(isprog($inneritem)){
@@ -124,15 +125,6 @@ foreach ($entries->childNodes as $entry){
 												// Ignore stray stuff
 										}else if(issign($inneritem)){
 												array_push($sign,$inneritem);
-										}else if(issign(substr($inneritem,-4,4))&&($key==0)){
-												$oentry['kursben']=substr($inneritem,0,-4);
-												array_push($sign,substr($inneritem,-4,4));
-										}else if(isprog(substr($inneritem,-8,8))){
-												$oentry['kursben']=substr($inneritem,0,-8);
-												array_push($prog,substr($inneritem,-8,8));
-										}else if(isgroup(substr($inneritem,-1,1))&&$key==0){
-												$oentry['kursben']=substr($inneritem,0,-1);
-												$oentry['grupp']=substr($inneritem,-1,1);
 										}else{
 												if($inneritem=="Dugga"||$inneritem=="Undervisning"||$inneritem=="Föreläsning"||$inneritem=="Handledning"||$inneritem=="Möte"||$inneritem=="Forskning"||$inneritem=="Seminarium"||$inneritem=="Examinatorsmöte"||$inneritem=="Programträff"||$inneritem=="Tentamen"||$inneritem=="Omtentamen"||$inneritem=="Introduktion"||$inneritem=="Lab"||$inneritem=="Övrigt"||$inneritem=="Redovisning"||$inneritem=="Lektion"){
 														$oentry['aktivitet']=$inneritem;
