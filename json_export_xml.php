@@ -114,7 +114,7 @@ foreach ($entries->childNodes as $entry){
 										// Already a signature so we do nothing
 								}else{
 										$oentry['kursben']=substr($inneritems[0],0,strrpos($inneritems[0]," "));
-										$inneritems[0]=substr($inneritems[0],strrpos($inneritems[0]," ")+1);
+										$inneritems[0]=trim(substr($inneritems[0],strrpos($inneritems[0]," ")+1));
 								}
 							
 								foreach($inneritems as $key=>$inneritem){
@@ -124,7 +124,13 @@ foreach ($entries->childNodes as $entry){
 										}else if(isgroup($inneritem)||iscourse(substr($inneritem,-6,6))){
 												// Ignore stray stuff
 										}else if(issign($inneritem)){
-												array_push($sign,$inneritem);
+												$dign=Array();
+												if(isset($names[$inneritem])){
+														$dign[$names[$inneritem]]=$inneritem;
+												}else{
+														$dign[$inneritem]="UNK";
+												}
+												array_push($sign,$dign);
 										}else{
 												if($inneritem=="Dugga"||$inneritem=="Undervisning"||$inneritem=="Föreläsning"||$inneritem=="Handledning"||$inneritem=="Möte"||$inneritem=="Forskning"||$inneritem=="Seminarium"||$inneritem=="Examinatorsmöte"||$inneritem=="Programträff"||$inneritem=="Tentamen"||$inneritem=="Omtentamen"||$inneritem=="Introduktion"||$inneritem=="Lab"||$inneritem=="Övrigt"||$inneritem=="Redovisning"||$inneritem=="Lektion"){
 														$oentry['aktivitet']=$inneritem;
