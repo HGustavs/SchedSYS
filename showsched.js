@@ -17,6 +17,8 @@ var result = getWeekNumber(new Date());
 var auto_update=null;
 var uidArr=[];
 var confdata=[];
+var bookings={};
+var is_admin=0;
 
 //------------------------------------=======############==========----------------------------------------
 //                                           Mouse events
@@ -27,7 +29,7 @@ function fab_action()
     if(document.getElementById("options-pane").className=="show-options-pane"){
 				document.getElementById('optmarker').innerHTML="&#9660;Options";
         document.getElementById("options-pane").className="hide-options-pane";
-				document.getElementById("bokningpane").style.display="block";			
+				document.getElementById("bookingpane").style.display="block";			
     }else{
 				document.getElementById('optmarker').innerHTML="&#x1f4a9;Options";
 				document.getElementById("options-pane").className="show-options-pane";
@@ -44,6 +46,17 @@ function clickbookable(element,namn)
 		
 		document.getElementById("boknamn").value=namn;
 		document.getElementById("bokid").value=element.id;
+		if(typeof bookings[element.id] !== "undefined"){
+				console.log("We made this booking from this browser!");
+				delStr="<span id='cancel-meeting-btn' style='color:#F00;padding:2px;background-color:#FFF;' onclick='cancelMeeting(\""+element.id+"\",\""+bookings[element.id]+"\")'>&times;</span>";
+				document.getElementById("cancel-meeting-btn").outerHTML=delStr;
+		}else if(is_admin){
+			console.log("We are admin!");
+			delStr="<span id='cancel-meeting-btn' style='color:#F00;padding:2px;background-color:#FFF;' onclick='cancelMeeting(\""+element.id+"\",\"UNK\")'>&times;</span>";
+			document.getElementById("cancel-meeting-btn").outerHTML=delStr;
+		}else{
+				document.getElementById("cancel-meeting-btn").style.display="none";
+		}
 		console.log(element);
 }
 
@@ -52,6 +65,19 @@ function saveBooking()
 		callService("MEET","confsched_service_new.php",{ 
 									"meetid": document.getElementById("bokid").value, 
 									"meetname": document.getElementById("boknamn").value 
+		});
+		callService("GET","showsched_service_new.php",{ "start_week": -2, "end_week": 2});
+}
+
+function cancelMeeting(id,token)
+{
+		console.log("deleting",id)
+		delete bookings[id];
+		console.log("deleted", bookings)
+		localStorage.setItem("schedsys-bookings",JSON.stringify(bookings));
+		callService("DELMEET","confsched_service_new.php",{ 
+			"meetid": id, 
+			"meettoken": token 
 		});
 		callService("GET","showsched_service_new.php",{ "start_week": -2, "end_week": 2});
 }
@@ -340,6 +366,18 @@ function updateConf()
 function data_returned(ret) {
 		if(ret.debug!="NONE!") alert(ret.debug);
 	
+		bookingsStr=localStorage.getItem("schedsys-bookings");
+		if(bookingsStr===null){
+				bookings={};
+		}else{
+				console.log(bookingsStr)
+				bookings=JSON.parse(bookingsStr,true);
+		}
+
+    if (typeof ret.admin !== "undefined"){
+				is_admin=ret.admin;
+		}
+
     if (typeof ret.data !== "undefined"){
 				data=ret.data;
 				showdata();		
@@ -348,7 +386,16 @@ function data_returned(ret) {
 				confdata=ret.confdata;
 				updateConf();
 		}
-    if (typeof ret.confdata === "undefined"&&typeof ret.data === "undefined"){
+    if (typeof ret.meetid !== "undefined" && typeof ret.meettoken !== "undefined"){
+				if(ret.meetid!="UNK" && ret.meettoken != "UNK"){
+						console.log("We have booked a meeting!");
+						bookings[ret.meetid]=ret.meettoken;
+						localStorage.setItem("schedsys-bookings",JSON.stringify(bookings));
+						console.log(bookings,ret.meetid,ret.meettoken)
+				}
+		}
+		if (typeof ret.confdata === "undefined"&&typeof ret.data === "undefined"){
         console.log("Error receiveing data!");
 		}
+
 }

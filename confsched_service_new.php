@@ -2,6 +2,7 @@
 
 session_start();
 require "config.php";
+$is_admin=0;
 if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 date_default_timezone_set('Europe/Stockholm');
 $debug="NONE!";
@@ -26,6 +27,16 @@ function getOP($name)
 		else return "UNK";
 }
 
+function base64url_encode($input)
+{
+    return strtr(base64_encode($input), '+/=', '._-');
+}
+
+function base64url_decode($input)
+{
+    return base64_decode(strtr($input, '._-', '+/='));
+}
+
 $op=getOP('op');
 
 //------------------------------------==========############==========----------------------------------------
@@ -46,6 +57,12 @@ $sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varcha
 $log_db->exec($sql);	
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
+$sql = 'CREATE TABLE IF NOT EXISTS tokens(id VARCHAR(64) PRIMARY KEY,aux text);';
+$log_db->exec($sql);	
+
+
+//$sql = 'DELETE FROM tokens;';
+//$log_db->exec($sql);	
 
 // Retrieve config from database
 $cdbarr=Array();
@@ -56,7 +73,7 @@ foreach ($rows as $row) {
 }
 
 if($_SESSION['adminpass']==adminpass){
-
+		$is_admin=1;
 
 		//------------------------------------==========############==========----------------------------------------
 		//                                               Operations
@@ -118,6 +135,7 @@ if($_SESSION['adminpass']==adminpass){
 }
 
 if($op=="MEET"){
+		$meettoken="UNK";
 		$mid=getOP('meetid');
 		$mname=getOP('meetname');
 
@@ -130,23 +148,109 @@ if($op=="MEET"){
 				$element=json_decode($row['datan']);
 		}
 		if($element!="UNK"){
-				$element->kommentar=$mname;
-				$jsonelement = json_encode($element);
-				$query = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
-				$query->bindParam(':datan', $jsonelement);
-				$query->bindParam(':id', $mid);
-				if(!$query->execute()) {
-							$error=$query->errorInfo();
-							$debug="Error:\nError writing to history!\n".$error[2];
-				}				
+				if($element->kommentar == "" || $is_admin){
+						$element->kommentar=$mname;
+						$jsonelement = json_encode($element);
+						$query = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
+						$query->bindParam(':datan', $jsonelement);
+						$query->bindParam(':id', $mid);
+						if(!$query->execute()) {
+									$error=$query->errorInfo();
+									$debug="Error:\nError writing to history!\n".$error[2];
+						}
+						if($is_admin){
+								// Remove any tokens now that admin has made the booking
+								$query = $log_db->prepare('DELETE FROM tokens WHERE id=:id');			
+								$query->bindParam(':id', $mid);
+								if(!$query->execute()) {
+											$error=$query->errorInfo();
+											$debug="Error:\nError deleting token!\n".$error[2];
+								}
+						}else{
+								$meettoken=base64url_encode(random_bytes(16));				
+								$query = $log_db->prepare('INSERT INTO tokens (id,aux) VALUES(:id,:aux)');			
+								$query->bindParam(':id', $mid);
+								$query->bindParam(':aux', $meettoken);
+								if(!$query->execute()) {
+											$error=$query->errorInfo();
+											$debug="Error:\nError inserting token!\n".$error[2];
+								}		
+						}
+				}else{
+						$debug="Denna tid är redan bokad!";
+						$mid="UNK";		
+				}
 		}else{
 				$debug="Meeting id: ".$mid." not found!";
+				$mid="UNK";
 		}
 		$ret = array(
 				"debug" => $debug,
+				"meetid" => $mid,
+				"meettoken" => $meettoken,
 				"called_service" => basename(__FILE__),
 		);		
 }
+
+if($op=="DELMEET"){
+	$mid=getOP('meetid');
+	$token=getOP('meettoken');
+
+	$query = $log_db->prepare('SELECT * FROM tokens WHERE id=:id');			
+	$query->bindParam(':id', $mid);
+	$query->execute();
+	$rows = $query->fetchAll();
+	$element="UNK";
+	$is_deleted=false;
+	$is_found=false;
+	foreach ($rows as $row) {
+			$is_found=true;
+			if($row["aux"]==$token || $_SESSION['adminpass']==adminpass){
+					$qquery = $log_db->prepare('SELECT * FROM sched WHERE id=:id');			
+					$qquery->bindParam(':id', $mid);
+					$qquery->execute();
+					$qrows = $qquery->fetchAll();
+					foreach ($qrows as $qrow) {
+							$element=json_decode($qrow['datan']);
+					}
+					if($element!="UNK"){
+							$element->kommentar="";
+							$jsonelement = json_encode($element);
+							$pquery = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
+							$pquery->bindParam(':datan', $jsonelement);
+							$pquery->bindParam(':id', $mid);
+							if(!$pquery->execute()) {
+										$error=$pquery->errorInfo();
+										$debug="Error:\nError deleting meeting!\n".$error[2];
+							}
+							$is_deleted=true;
+					}else{
+							$debug="Meeting id: ".$mid." not found!";
+							$mid="UNK";		
+					}
+			}else{
+					$debug="Tokens does not match!";
+					$mid="UNK";
+			}
+	}
+	if($is_deleted || !$is_found){
+			$query = $log_db->prepare('DELETE FROM tokens WHERE id=:id');			
+			$query->bindParam(':id', $mid);
+			if(!$query->execute()) {
+						$error=$query->errorInfo();
+						$debug="Error:\nError deleting token!\n".$error[2];
+			}
+			$mid="UNK";
+	}
+	$ret = array(
+			"debug" => $debug,
+			"admin" => $is_admin,
+			"meetid" => $mid,
+			"meettoken" => $meettoken,
+			"called_service" => basename(__FILE__),
+	);		
+}
+
 
 header('Content-Type: application/json');
 echo json_encode($ret);
