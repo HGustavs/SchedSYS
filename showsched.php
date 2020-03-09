@@ -262,6 +262,7 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 								echo "</div>";
 						?>
 						<div id="bookingpane" style='display:none;'>
+								<div><label id="meeting-label"></label></div>
 								<div><input type='hidden' value='-1' id='bokid'><label>Namn:</label><input type='text' placeholder='Greger' id='boknamn'><span id='cancel-meeting-btn'></span></div>
 								<div><input type='button' value='save' onclick='saveBooking();'></div>
 						</div>

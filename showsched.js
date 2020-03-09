@@ -16,6 +16,7 @@ var data = [];
 var result = getWeekNumber(new Date());
 var auto_update=null;
 var uidArr=[];
+var bookingArr=[];
 var confdata=[];
 var bookings={};
 var is_admin=0;
@@ -46,14 +47,18 @@ function clickbookable(element,namn)
 		
 		document.getElementById("boknamn").value=namn;
 		document.getElementById("bokid").value=element.id;
+		if(bookingArr[element.id]){
+				let b=bookingArr[element.id]
+				document.getElementById("meeting-label").innerHTML=b.kursben+" "+b.starttid+"-"+b.sluttid;
+		}
 		if(typeof bookings[element.id] !== "undefined"){
 				console.log("We made this booking from this browser!");
 				delStr="<span id='cancel-meeting-btn' style='color:#F00;padding:2px;background-color:#FFF;' onclick='cancelMeeting(\""+element.id+"\",\""+bookings[element.id]+"\")'>&times;</span>";
 				document.getElementById("cancel-meeting-btn").outerHTML=delStr;
 		}else if(is_admin){
-			console.log("We are admin!");
-			delStr="<span id='cancel-meeting-btn' style='color:#F00;padding:2px;background-color:#FFF;' onclick='cancelMeeting(\""+element.id+"\",\"UNK\")'>&times;</span>";
-			document.getElementById("cancel-meeting-btn").outerHTML=delStr;
+				console.log("We are admin!");
+				delStr="<span id='cancel-meeting-btn' style='color:#F00;padding:2px;background-color:#FFF;' onclick='cancelMeeting(\""+element.id+"\",\"UNK\")'>&times;</span>";
+				document.getElementById("cancel-meeting-btn").outerHTML=delStr;
 		}else{
 				document.getElementById("cancel-meeting-btn").style.display="none";
 		}
@@ -380,6 +385,17 @@ function data_returned(ret) {
 
     if (typeof ret.data !== "undefined"){
 				data=ret.data;
+				// Swizzel 
+				for(const [day,items] of Object.entries(data)){
+						if(typeof day !== "undefined"){
+								for (let item of items){
+										if(typeof item !== "undefined"){
+												item=JSON.parse(item)
+												bookingArr[item.id]=item;
+										}
+								}
+						}
+				}
 				showdata();		
 		}
     if (typeof ret.confdata !== "undefined"){
