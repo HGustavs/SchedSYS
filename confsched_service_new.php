@@ -28,33 +28,35 @@ function getOP($name)
 
 $op=getOP('op');
 
+//------------------------------------==========############==========----------------------------------------
+//                                  Startup Create Database & Read Config
+//------------------------------------==========############==========----------------------------------------
+
+$link=getOP('link');
+$kind=getOP('kind');
+$aux=getOP('aux');
+$id=getOP('id');
+
+// Updated database! - id is varchar 32 so we can store uuids of different kinds if need be
+// New feature: Each row contains one element not one day - this is so we can synch more effectively using ids
+$log_db = new PDO('sqlite:./scheduledata.db');
+$log_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$log_db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+$sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varchar(10), datan TEXT);';
+$log_db->exec($sql);	
+$sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
+$log_db->exec($sql);	
+
+// Retrieve config from database
+$cdbarr=Array();
+$result = $log_db->query('SELECT * FROM conf;');
+$rows = $result->fetchAll();
+foreach ($rows as $row) {
+		$cdbarr[$row['id']]=$row;
+}
+
 if($_SESSION['adminpass']==adminpass){
-		//------------------------------------==========############==========----------------------------------------
-		//                                  Startup Create Database & Read Config
-		//------------------------------------==========############==========----------------------------------------
 
-		$link=getOP('link');
-		$kind=getOP('kind');
-		$aux=getOP('aux');
-		$id=getOP('id');
-
-		// Updated database! - id is varchar 32 so we can store uuids of different kinds if need be
-		// New feature: Each row contains one element not one day - this is so we can synch more effectively using ids
-		$log_db = new PDO('sqlite:./scheduledata.db');
-		$log_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$log_db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-		$sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varchar(10), datan TEXT);';
-		$log_db->exec($sql);	
-		$sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
-		$log_db->exec($sql);	
-
-		// Retrieve config from database
-		$cdbarr=Array();
-		$result = $log_db->query('SELECT * FROM conf;');
-		$rows = $result->fetchAll();
-		foreach ($rows as $row) {
-				$cdbarr[$row['id']]=$row;
-		}
 
 		//------------------------------------==========############==========----------------------------------------
 		//                                               Operations
@@ -115,17 +117,19 @@ if($_SESSION['adminpass']==adminpass){
 
 }
 
-		if($op=="MEET"){
-				$mid=getOP('meetid');
-				$mname=getOP('meetname');
+if($op=="MEET"){
+		$mid=getOP('meetid');
+		$mname=getOP('meetname');
 
-				$query = $log_db->prepare('SELECT * FROM sched WHERE id=:id');			
-				$query->bindParam(':id', $mid);
-				$query->execute();
-				$rows = $query->fetchAll();
-				foreach ($rows as $row) {
-						$element=json_decode($row['datan']);
-				}
+		$query = $log_db->prepare('SELECT * FROM sched WHERE id=:id');			
+		$query->bindParam(':id', $mid);
+		$query->execute();
+		$rows = $query->fetchAll();
+		$element="UNK";
+		foreach ($rows as $row) {
+				$element=json_decode($row['datan']);
+		}
+		if($element!="UNK"){
 				$element->kommentar=$mname;
 				$jsonelement = json_encode($element);
 				$query = $log_db->prepare('UPDATE sched SET datan=:datan WHERE id=:id');			
@@ -134,13 +138,16 @@ if($_SESSION['adminpass']==adminpass){
 				if(!$query->execute()) {
 							$error=$query->errorInfo();
 							$debug="Error:\nError writing to history!\n".$error[2];
-				}			
-				$ret = array(
-						"debug" => $debug,
-						"called_service" => $called_service
-				);		
+				}				
+		}else{
+				$debug="Meeting id: ".$mid." not found!";
 		}
+		$ret = array(
+				"debug" => $debug,
+				"called_service" => basename(__FILE__),
+		);		
+}
 
-		header('Content-Type: application/json');
-		echo json_encode($ret);
+header('Content-Type: application/json');
+echo json_encode($ret);
 ?>

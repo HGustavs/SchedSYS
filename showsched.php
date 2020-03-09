@@ -238,8 +238,8 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
         <div id="options-pane-button" onclick="fab_action();"><span id='optmarker'>&#9660;Options</span></div>
         <div id="options-pane-content" >
 						<?php
+								echo "<div id='adminpane'>";
 								if($_SESSION['adminpass']==adminpass){
-										echo "<div id='adminpane'>";
 										echo "<fieldset>";
 										echo "<legend>Config</legend>";
 										echo "<div><label>Link:</label><input type='hidden' value='-1' id='confid'><input type='text' placeholder='S_BROM' id='link' value='Link'></div>";
@@ -250,7 +250,6 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 										echo "<fieldset>";
 										echo "<div id='tab'></div>";
 										echo "</fieldset>";
-										echo "</div>";
 								}else{
 										echo "<form method='post' action='adminlogin.php'>";
 										echo "<fieldset>";
@@ -260,7 +259,8 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 										echo "<input type='submit' value='OK'>";
 										echo "</form>";
 								}
-					  ?>
+								echo "</div>";
+						?>
 						<div id="bookingpane" style='display:none;'>
 								<div><input type='hidden' value='-1' id='bokid'><label>Namn:</label><input type='text' placeholder='Greger' id='boknamn'></div>
 								<div><input type='button' value='save' onclick='saveBooking();'></div>

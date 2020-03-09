@@ -332,7 +332,9 @@ function updateConf()
         cfStr+="</tr>";
     }
 		cfStr+="<table>";
-    document.getElementById("tab").innerHTML=cfStr;
+		if(document.getElementById("tab")){
+				document.getElementById("tab").innerHTML=cfStr;
+		}
 }
 
 function data_returned(ret) {
@@ -347,6 +349,6 @@ function data_returned(ret) {
 				updateConf();
 		}
     if (typeof ret.confdata === "undefined"&&typeof ret.data === "undefined"){
-        alert("Error receiveing data!");
+        console.log("Error receiveing data!");
 		}
 }
