@@ -191,10 +191,10 @@ $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
 		if(isset($dbarr[$row['datum']])){
-				array_push($dbarr[$row['datum']], $row['datan']);
+				array_push($dbarr[$row['datum']], json_decode($row['datan'],true));
 		}else{
 				$dbarr[$row['datum']]=Array();
-				array_push($dbarr[$row['datum']], $row['datan']);
+				array_push($dbarr[$row['datum']], json_decode($row['datan'],true));
 		}
 }
 

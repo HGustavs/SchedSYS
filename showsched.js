@@ -225,7 +225,20 @@ function showdata() {
             str += "<div class='lunch' style='top:" + startlunch + "px;height:" + endlunch + "px'></div>";
             if (typeof data[datumet] != "undefined") {
                 for (var k = 0; k < data[datumet].length; k++) {
-                    var ditem = JSON.parse(data[datumet][k]);
+                    var ditem = data[datumet][k];
+
+										for (var key in ditem.signatur) {
+												console.log(ditem.signatur[key]);
+										}
+
+//									for(var l=0;l<ditem.signatur.length;l++){
+//												console.log(ditem.signatur);
+//												for (var key in ditem.signatur[l]) {
+														//console.log(ditem.signatur[key],key);
+														//console.log(ditem.signatur[l][key]);
+//														console.log(key);
+//												}
+									
                     var starty = timetopix(ditem['starttid']) * 30;
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
 									
@@ -385,19 +398,9 @@ function data_returned(ret) {
 
     if (typeof ret.data !== "undefined"){
 				data=ret.data;
-				// Swizzel 
-				for(const [day,items] of Object.entries(data)){
-						if(typeof day !== "undefined"){
-								for (let item of items){
-										if(typeof item !== "undefined"){
-												item=JSON.parse(item)
-												bookingArr[item.id]=item;
-										}
-								}
-						}
-				}
 				showdata();		
 		}
+	
     if (typeof ret.confdata !== "undefined"){
 				confdata=ret.confdata;
 				updateConf();
