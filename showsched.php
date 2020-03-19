@@ -218,7 +218,30 @@ if(!isset($_SESSION['adminpass'])) $_SESSION['adminpass']="UNK";
 					 flex-direction: row;
                      justify-content: space-between;
 					 pointer-events: none;
-				}			
+				}	
+			
+			.signcontainer{
+					border-top:1px dotted RGBA(0,0,0,0.2);
+					margin-top:3px;
+					padding-top:3px;
+			}
+			
+			.sign{
+					font-weight:100;
+					padding-right:6px;
+			}
+			
+			.updated{
+					font-size:small;
+					font-style:italic;
+					font-weight:400;
+					color:darkred;
+			}
+			
+			.comment{
+					font-style:italic;
+					font-weight:400;	
+			}
 			
     </style>
 

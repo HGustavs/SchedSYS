@@ -226,18 +226,6 @@ function showdata() {
             if (typeof data[datumet] != "undefined") {
                 for (var k = 0; k < data[datumet].length; k++) {
                     var ditem = data[datumet][k];
-
-										for (var key in ditem.signatur) {
-												console.log(ditem.signatur[key]);
-										}
-
-//									for(var l=0;l<ditem.signatur.length;l++){
-//												console.log(ditem.signatur);
-//												for (var key in ditem.signatur[l]) {
-														//console.log(ditem.signatur[key],key);
-														//console.log(ditem.signatur[l][key]);
-//														console.log(key);
-//												}
 									
                     var starty = timetopix(ditem['starttid']) * 30;
                     var endy = (timetopix(ditem['sluttid']) * 30) - starty;
@@ -282,16 +270,23 @@ function showdata() {
                     str += ditem['lokal'];
                     if (kommentar != "") {
                         str += "<br>";
-                        str += "<span style='font-style:italic;font-weight:400'>";
+                        str += "<span class='comment'>";
                         str += kommentar;
                         str += "</span>";
                     }
                     if (typeof ditem['Uppdaterad']!=="undefined") {
                         str += "<br>";
-                        str += "<span style='font-size:small;font-style:italic;font-weight:400'>";
+                        str += "<span class='updated'>";
                         str += ditem['uppdaterad'];
                         str += "</span>";
                     }
+
+										str+="<div class='signcontainer'>";
+										for (var key in ditem.signatur) {
+												str+="<span class='sign'>"+ditem.signatur[key]+"</span>";
+										}
+										str+="</div>";
+									
                     str += "</div>"
                 }
             }

@@ -93,6 +93,7 @@ function createElement($id,$datum,$element,$op)
 
 function syncData($dataset,$dbarr)
 {
+		global $debug;
 		// Parse each of the elements in json array and insert into database
 		foreach ($dataset as $element) {
 				$id=$element->id;
@@ -103,8 +104,13 @@ function syncData($dataset,$dbarr)
 					// Clever way to check if only comment has changed if so, keep unmodified
 					$tmp_element=$element;
 					$tmp_db_element=json_decode($dbarr[$id]);
-					$tmp_element->kommentar=$tmp_db_element->kommentar;
+					
 
+					// Only repair exjobbsmöte
+					if($tmp_element->kursben=="Exjobbsmöte"){
+							$tmp_element->kommentar=$tmp_db_element->kommentar;
+					}
+					
 					//$debug.="\n\nSee if only comment differ: " . ($dbarr[$id] != json_encode($tmp_element)) . "\n\n" . json_encode($tmp_db_element). "\n\n" . json_encode($tmp_element) . "!!\n\n" . $dbarr[$id] . "!!"."\n";
 					// If more than comment has changed ... do update
 					if ($dbarr[$id] != json_encode($tmp_element)){
@@ -134,7 +140,8 @@ foreach ($rows as $row) {
 	 Synchronize
 ----------------------------------------------------------------------------------*/	
 // Check if no history, if so, read history by default. select count(*) from sched if count is zero import history
-		// Create array for synchronization of database
+// Create array for synchronization of database
+
 $dbarr=Array();
 $result = $log_db->query('SELECT * FROM sched;');
 $rows = $result->fetchAll();
