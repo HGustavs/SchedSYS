@@ -124,17 +124,11 @@ foreach ($entries->childNodes as $entry){
 										}else if(isgroup($inneritem)||iscourse(substr($inneritem,-6,6))){
 												// Ignore stray stuff
 										}else if(issign($inneritem)){
-//												$dign=Array();
 												if(isset($names[$inneritem])){
-														// $dign[$names[$inneritem]]=$inneritem;
-//														array_push($sign,$inneritem);
-//														array_push($sign,$names[$inneritem]);
 														$sign[$inneritem]=$names[$inneritem];
 												}else{
-//														$dign[$inneritem]="UNK";
-//														array_push($sign,$inneritem);
-//														array_push($sign,"UNK");
-														$sign[$inneritem]="UNK";
+														// Unknown signature
+														$sign[$inneritem]=$inneritem;
 												}
 										}else{
 												if($inneritem=="Dugga"||$inneritem=="Undervisning"||$inneritem=="Föreläsning"||$inneritem=="Handledning"||$inneritem=="Möte"||$inneritem=="Forskning"||$inneritem=="Seminarium"||$inneritem=="Examinatorsmöte"||$inneritem=="Programträff"||$inneritem=="Tentamen"||$inneritem=="Omtentamen"||$inneritem=="Introduktion"||$inneritem=="Lab"||$inneritem=="Övrigt"||$inneritem=="Redovisning"||$inneritem=="Lektion"){
