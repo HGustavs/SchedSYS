@@ -131,9 +131,12 @@ foreach ($entries->childNodes as $entry){
 														$sign[$inneritem]=$inneritem;
 												}
 										}else{
-												if($inneritem=="Dugga"||$inneritem=="Undervisning"||$inneritem=="Föreläsning"||$inneritem=="Handledning"||$inneritem=="Möte"||$inneritem=="Forskning"||$inneritem=="Seminarium"||$inneritem=="Examinatorsmöte"||$inneritem=="Programträff"||$inneritem=="Tentamen"||$inneritem=="Omtentamen"||$inneritem=="Introduktion"||$inneritem=="Lab"||$inneritem=="Övrigt"||$inneritem=="Redovisning"||$inneritem=="Lektion"){
+												if($inneritem=="Distans"||$inneritem=="Dugga"||$inneritem=="Undervisning"||$inneritem=="Föreläsning"||$inneritem=="Handledning"||$inneritem=="Möte"||$inneritem=="Forskning"||$inneritem=="Seminarium"||$inneritem=="Examinatorsmöte"||$inneritem=="Programträff"||$inneritem=="Tentamen"||$inneritem=="Omtentamen"||$inneritem=="Introduktion"||$inneritem=="Lab"||$inneritem=="Övrigt"||$inneritem=="Redovisning"||$inneritem=="Lektion"){
 														$oentry['aktivitet']=$inneritem;
 												}else if($key==(count($inneritems)-1)){
+														if($spec!=""){
+																$spec.=" ";
+														}
 														$oentry['kommentar']=$spec.$inneritem;
 												}else{
 														$spec.=$inneritem;
