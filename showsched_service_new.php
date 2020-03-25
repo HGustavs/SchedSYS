@@ -244,7 +244,6 @@ $ret = array(
     "data" => $dbarr,
     "confdata" => $cdbarr,	
 		"called_service" => $called_service,
-		"deleted" => $deletedItemsArr
 );
 
 header('Content-Type: application/json');
