@@ -14,7 +14,8 @@ require "config.php";
 
 date_default_timezone_set('Europe/Stockholm');
 $debug="NONE!";
-	
+$alldata=array();
+
 /*--------------------------------------------------------------------------------
 	 Create Database
 ----------------------------------------------------------------------------------*/	
@@ -28,6 +29,10 @@ $sql = 'CREATE TABLE IF NOT EXISTS sched(id VARCHAR(32) PRIMARY KEY,datum varcha
 $log_db->exec($sql);	
 $sql = 'CREATE TABLE IF NOT EXISTS conf(id INTEGER PRIMARY KEY,link text,kind varchar(32),aux text);';
 $log_db->exec($sql);	
+
+// If you have an old DB you need to update once with SQL below.
+// $sql = 'ALTER TABLE sched ADD COLUMN canceled VARCHAR(20) DEFAULT NULL;';
+// $log_db->exec($sql);	
 
 $pathurl=substr($_SERVER['HTTP_REFERER'],0,strrpos($_SERVER['HTTP_REFERER'],"/"));
 
@@ -91,13 +96,29 @@ function createElement($id,$datum,$element,$op)
 		}	
 }
 
+function deleteElement($id)
+{
+		global $debug;
+		global $log_db;
+	
+		$query = $log_db->prepare("UPDATE sched SET canceled=strftime('%Y-%m-%d %H:%M:%S','now') WHERE id=:id");
+			
+		$query->bindParam(':id', $id);
+		if(!$query->execute()) {
+			$error=$query->errorInfo();
+			$debug="Error:\nRemoving meeting from DB!\n".$error[2];
+		}	
+}
+
 function syncData($dataset,$dbarr)
 {
 		global $debug;
+		global $alldata;
 		// Parse each of the elements in json array and insert into database
 		foreach ($dataset as $element) {
 				$id=$element->id;
 				$datum=$element->startdatum;
+				$alldata[$id]=$element;
 				// If element with id does not exist in database, Make it so, if element in database is changed compared to data, Update it!
 				if(isset($dbarr[$id])){
 
@@ -120,7 +141,19 @@ function syncData($dataset,$dbarr)
 						createElement($id,$datum,$element,"i");
 						$dbarr[$id]=json_encode($element);
 				}
-		}	
+		}
+		// Go through all elements from now and forward in $dbarr, 
+		// if an element in $dbarr do not occur in $alldata this means that the element has been canceled
+		$now=time();
+		foreach($dbarr as $key => $dbelement){
+				$dbelement = json_decode($dbelement,true);
+
+				if($now < strtotime($dbelement["startdatum"]." ".$dbelement["starttid"])){
+						if(!isset($alldata[$key])){
+								deleteElement($key);				
+						}
+				}
+		}
 }
 
 /*--------------------------------------------------------------------------------
@@ -194,7 +227,7 @@ foreach($cdbarr as $ical){
 
 // Retrieve full database and swizzle into associative array for each day
 $dbarr=Array();
-$result = $log_db->query('SELECT * FROM sched;');
+$result = $log_db->query('SELECT * FROM sched WHERE canceled IS NULL;');
 $rows = $result->fetchAll();
 foreach ($rows as $row) {
 		if(isset($dbarr[$row['datum']])){
@@ -210,7 +243,8 @@ $ret = array(
     "debug" => $debug,
     "data" => $dbarr,
     "confdata" => $cdbarr,	
-    "called_service" => $called_service
+		"called_service" => $called_service,
+		"deleted" => $deletedItemsArr
 );
 
 header('Content-Type: application/json');
